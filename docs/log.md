@@ -32,3 +32,5 @@
   - docs / scripts / AGENTS.md をリポジトリ内へ
   - build-logs も `src/build-logs` へ移動（gitignore 済み）
   - コミット: `bec03c9512`, `7fbcaa24c6`, `bb62b2f2cb`
+- 検索ボックスの幅を変更（広い画面で 1520px）
+- NTP に「thisismybrowser」ラベルを追加（HTML + CSS）

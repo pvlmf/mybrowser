@@ -4,14 +4,13 @@
 
 ## 進行中
 
-- [ ] NTP に「mybrowser」ラベルを追加
-  - 目的: 検索ボックスの下に小さなブランド表記を出す
-  - 変更: `app.html`（要素追加）、`app.css`（スタイル）
-  - 完了条件: 検索ボックス直下に中央揃えで表示され、ショートカットと重ならない
-  - 確認: `./scripts/dev.sh`
+- なし（下の候補から選ぶ）
 
 ## 完了（最近）
 
+- [x] NTP に「mybrowser」ラベルを追加
+  - 検索ボックス直下に中央揃えで表示（テキストは `thisismybrowser`）
+  - `app.html` に要素追加、`app.css` でスタイル
 - [x] NTP の背景色変更
   - [x] `display: block` + `background`
   - [x] CSS 変数化

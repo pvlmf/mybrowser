@@ -190,6 +190,16 @@ cr-most-visited {
   z-index: 2;
 }
 
+#mybrowserLabel {
+  color: var(--color-new-tab-page-secondary-foreground);
+  font-size: 12px;
+  letter-spacing: 0.08rem;
+  margin-top: 4px;
+  margin-bottom: 16px;
+  opacity: 0.7;
+  user-select: none;
+}
+
 #modules:not([hidden]) {
   /* We use animation instead of transition to allow a fade-in out of
      display: none. */
