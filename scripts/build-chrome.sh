@@ -7,7 +7,7 @@ CHROME_DIR=$(cd "$(dirname "$0")/.." && pwd)
 CHROME_SRC=$CHROME_DIR
 export PATH=/home/pvlmf/depot_tools:$PATH
 OUT=out/Release
-LOG_DIR=$(cd "$CHROME_DIR/.." && pwd)/build-logs
+LOG_DIR=$CHROME_DIR/build-logs
 mkdir -p "$LOG_DIR"
 
 MAX_ATTEMPTS=${MAX_ATTEMPTS:-6}

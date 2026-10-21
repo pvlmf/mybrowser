@@ -4,7 +4,7 @@
 set -u
 
 CHROME_DIR=$(cd "$(dirname "$0")/.." && pwd)
-LOG=$(cd "$CHROME_DIR/.." && pwd)/build-logs/watch.log
+LOG=$CHROME_DIR/build-logs/watch.log
 mkdir -p "$(dirname "$LOG")"
 
 log() { echo "[$(date '+%F %T')] $*" | tee -a "$LOG"; }
