@@ -65,6 +65,8 @@ grep -o "mybrowser-ntp-background:lightgreen" \
 4. 画像が表示され、緑が消えていれば OK
 5. 背景を「なし」に戻すと緑が戻る
 
+**確認済み（2026-10-21）**: 画像が表示され、緑色は消えた。
+
 DevTools での確認:
 
 ```js
@@ -75,3 +77,4 @@ document.body.hasAttribute('show-background-image')
 ## コミット
 
 - `721ec0cee3` NTP: set a custom background color for mybrowser
+- `8421ee2fb9` NTP: use a CSS variable for the background and respect background images

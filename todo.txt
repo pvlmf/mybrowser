@@ -4,17 +4,18 @@
 
 ## 進行中
 
-- [ ] NTP の背景色変更を仕上げる
-  - [x] `display: block` + `background`
-  - [x] CSS 変数化
-  - [x] 背景画像があるときは `transparent`
-  - [ ] 背景画像を設定して動作確認（`docs/notes/2026-10-21-ntp-background.md`）
-  - [ ] 確認後にコミット
+- なし（下の候補から選ぶ）
 
 ## 完了（最近）
 
+- [x] NTP の背景色変更
+  - [x] `display: block` + `background`
+  - [x] CSS 変数化
+  - [x] 背景画像があるときは `transparent`
+  - [x] 背景画像を設定して動作確認（`docs/notes/2026-10-21-ntp-background.md`）
 - [x] ドキュメント・スクリプト・AGENTS.md をリポジトリ内に統合
 - [x] プロジェクトルートとリポジトリルートを `src` に統一
+- [x] リネーム後のフルビルド（17:18 成功）
 
 ## 次にやる（候補）
 
