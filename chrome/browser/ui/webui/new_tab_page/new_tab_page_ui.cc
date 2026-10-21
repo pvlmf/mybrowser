@@ -704,11 +704,7 @@ base::DictValue NewTabPageUI::GetLoadTimeData(
                ContextualSearchSourceToString(
                    contextual_search::ContextualSearchSource::kNewTabPage));
 
-  auto* service = AimEligibilityServiceFactory::GetForProfile(profile);
-  bool aim_eligible = service && service->IsAimEligible();
-
-  dict.Set("searchboxShowComposeEntrypoint",
-           (aim_eligible || ntp_composebox::IsNtpComposeboxEnabled(profile)));
+  dict.Set("searchboxShowComposeEntrypoint", false);
 
   dict.Set("ntpRealboxDynamicAiModeButton",
            ntp_realbox::IsNtpRealboxNextEnabled(profile) &&
@@ -759,8 +755,7 @@ base::DictValue NewTabPageUI::GetLoadTimeData(
       "tabFaviconChipsToCoinsEnabled",
       base::FeatureList::IsEnabled(omnibox::kContextManagementInComposebox) &&
           base::FeatureList::IsEnabled(omnibox::kTabFaviconChipsToCoins));
-  dict.Set("searchboxShowComposebox",
-           ntp_composebox::IsNtpComposeboxEnabled(profile));
+  dict.Set("searchboxShowComposebox", false);
   dict.Set("composeboxContextMenuTooltipsEnabled",
            omnibox::IsContextMenuTooltipsInComposeboxEnabled());
   dict.Set("composeboxShowZps", true);

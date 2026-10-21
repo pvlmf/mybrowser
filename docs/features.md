@@ -119,11 +119,17 @@ Chromium の更新（特にセキュリティ修正）を追う場合、コー�
 - 確認: NTP 表示、`thisismybrowser` ラベルあり、`ntp-action-chips` なし、`isActionChipsVisible_` false
 - その後: `action_chips/` と参照を削除（Remove、別コミット）
 
-### 次の実装（Stage 2-2: composebox）
+### 実装済み（Stage 2-2: composebox）
 
-- 候補1: `searchboxShowComposebox` を false（NTP の入口だけ隠す）
-- 候補2: `IsNtpComposeboxEnabled()` を false 固定（realbox next も止まる）
-- 確認: NTP の検索ボックスが通常表示になり、composebox が出ないこと
+- 変更: `searchboxShowComposeEntrypoint` と `searchboxShowComposebox` を false
+- 確認: compose ボタンなし、composebox なし、検索ボックスは残る
+- 学び: `loadTimeData` のキー名とプロパティ名は一致しないことがある
+
+### 次の実装（Stage 2-3: Lens）
+
+- 変更: `GetWebUIDataSourceDict` の `enable_lens_search` を false
+- 確認: `#lensSearchButton` が出ないこと、通常の検索は動くこと
+- 注意: Lens は omnibox と共有するコードがあるため、NTP のオプションだけを false にする
 
 ## 台帳（NTP 以外）
 

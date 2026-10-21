@@ -38,3 +38,7 @@
   - `AreActionChipsEnabled()` を false 固定
   - 確認: NTP 表示、`thisismybrowser` ラベルあり、`ntp-action-chips` なし、`isActionChipsVisible_` false
   - 学び: C++ → `loadTimeData` → Lit の流れ。shadow DOM は `ntp-app.shadowRoot` から確認
+- NTP の composebox を無効化
+  - `searchboxShowComposeEntrypoint` / `searchboxShowComposebox` を false
+  - 確認: compose ボタンなし、composebox なし、検索ボックスは残る
+  - 学び: `loadTimeData` のキー名とプロパティ名は一致しないことがある

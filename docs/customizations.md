@@ -11,6 +11,7 @@
 | `ff94803d51` | 検索ボックスの幅 | `app.css` | 中 |
 | `3f02973678` | NTP ラベル | `app.html`、`app.css` | 中 |
 | `87ce2335cb` | NTP の action chips を無効化 | `new_tab_page_ui.cc` | 中 |
+| `（本コミット）` | NTP の composebox を無効化 | `new_tab_page_ui.cc` | 中 |
 
 ## ビルド・スクリプト
 
