@@ -5,14 +5,17 @@
 ```bash
 cd /home/pvlmf/Projects/mybrowser/src
 
-# ビルド（監督スクリプト: 失敗時に分類して自動再試行）
+# ビルドして起動（開発中はこれ。引数は Chrome に渡る）
+./scripts/dev.sh
+./scripts/dev.sh --headless=new --dump-dom about:blank
+
+# ビルドだけ（監督スクリプト: 失敗時に分類して自動再試行）
 ./scripts/build-chrome.sh
 
-# 起動（プロファイル分離）
+# 起動だけ（プロファイル分離）
 ./scripts/run-chrome.sh
 
 # 手動でビルド
-cd src
 export PATH=/home/pvlmf/depot_tools:$PATH
 autoninja -C out/Release -j 6 chrome
 ```

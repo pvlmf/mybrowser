@@ -5,10 +5,13 @@ Chromium（`chromium/chromium`）のフォーク `pvlmf/mybrowser` を、学習�
 ## クイックスタート
 
 ```bash
-# ビルド（差分・自動リトライ付き）
+# ビルドして起動（開発中はこれ）
+./scripts/dev.sh
+
+# ビルドだけ（差分・自動リトライ付き）
 ./scripts/build-chrome.sh
 
-# 起動（プロファイル分離）
+# 起動だけ（プロファイル分離）
 ./scripts/run-chrome.sh
 ```
 
