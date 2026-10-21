@@ -91,7 +91,7 @@ Chromium の更新（特にセキュリティ修正）を追う場合、コー�
 | 3 | Lens | 画像で検索する機能 | はい | — | **無効化済み**（AI 方針） |
 | 4 | action chips | 検索ボックス下の AI 提案チップ（Deep Search、画像生成など） | はい | — | **無効化済み**（AI 方針） |
 | 5 | カスタマイズ（背景・テーマ） | 背景・テーマ・ショートカット表示の設定 | いいえ | はい | Keep |
-| 6 | OneGoogleBar | 上部の Google アカウント/アプリバー | いいえ | いいえ | **Hide → Remove**（Google 連携） |
+| 6 | OneGoogleBar | 上部の Google アカウント/アプリバー | いいえ | いいえ | **無効化済み**（Google 連携） |
 | 7 | ショートカット | よく使うサイトのタイル | いいえ | はい | **Keep** |
 | 8 | 音声検索 | マイクで音声入力する | いいえ（Google 連携） | いいえ | **無効化済み** |
 | 9 | realbox next（AI Mode） | 検索ボックスの AI Mode 表示 | はい | — | **無効化済み** |
@@ -139,11 +139,17 @@ Chromium の更新（特にセキュリティ修正）を追う場合、コー�
 - 確認: `ntpRealboxNextEnabled_` false、AI Mode ボタンなし、プレースホルダーが通常検索に戻る
 - 学び: 機能フラグのデフォルトを変えると、派生する値もまとめて false になる
 
-### 次の実装（Stage 2-5: OneGoogleBar）
+### 実装済み（Stage 2-5: OneGoogleBar）
 
 - 変更: `oneGoogleBarEnabled` を false
-- 確認: NTP 上部に Google アカウントバーが出ないこと
-- 注意: `oneGoogleBarIframePath_` などのコードは残す（Hide 段階）
+- 確認: `oneGoogleBarEnabled_` false、`#oneGoogleBar` なし、ショートカットは残る
+- 学び: app.html の条件分岐で iframe 自体が作られない
+
+### 次の実装（Stage 2-6: モジュール）
+
+- 変更: `NewTabPageUI::OnLoad()` の `modulesEnabled` を false
+- 確認: `modulesEnabled_` false、`#modules` なし
+- その後: モジュールの C++ / WebUI を削除（Remove、別コミット）
 
 ## 台帳（NTP 以外）
 

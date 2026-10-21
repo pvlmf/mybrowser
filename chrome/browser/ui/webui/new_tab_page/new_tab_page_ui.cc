@@ -321,8 +321,7 @@ base::DictValue NewTabPageUI::GetLoadTimeData(
            ntp_features::kNtpNextShowDismissalUIParam.Get());
   dict.Set("ntpNextDisablementContextMenuEnabled",
            ntp_features::kNtpNextDisablementContextMenuParam.Get());
-  dict.Set("oneGoogleBarEnabled",
-           base::FeatureList::IsEnabled(ntp_features::kNtpOneGoogleBar));
+  dict.Set("oneGoogleBarEnabled", false);
   dict.Set("shortcutsEnabled",
            base::FeatureList::IsEnabled(ntp_features::kNtpShortcuts));
   dict.Set("logoEnabled", base::FeatureList::IsEnabled(ntp_features::kNtpLogo));

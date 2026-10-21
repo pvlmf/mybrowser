@@ -50,3 +50,7 @@
   - `kNtpRealboxNext` を `FEATURE_DISABLED_BY_DEFAULT` に
   - 確認: `ntpRealboxNextEnabled_` false、AI Mode ボタンなし、プレースホルダーが通常検索に戻る
   - 学び: 機能フラグのデフォルトを変えると派生する値もまとめて false になる
+- NTP の OneGoogleBar を無効化
+  - `oneGoogleBarEnabled` を false
+  - 確認: `oneGoogleBarEnabled_` false、`#oneGoogleBar` なし、ショートカットは残る
+  - 学び: app.html の条件分岐で iframe 自体が作られない
