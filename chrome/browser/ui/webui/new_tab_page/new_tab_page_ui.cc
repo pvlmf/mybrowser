@@ -1438,9 +1438,7 @@ void NewTabPageUI::OnLoad() {
   base::DictValue update;
   update.Set("navigationStartTime",
              navigation_start_time_.InMillisecondsFSinceUnixEpoch());
-  const bool modules_enabled = ntp::HasModulesEnabled(
-      module_id_details_, IdentityManagerFactory::GetForProfile(profile_));
-  update.Set("modulesEnabled", modules_enabled);
+  update.Set("modulesEnabled", false);
 
   // Set up the NTP promo, if any.
   update.Set("browserPromoType", GetNtpPromoType());

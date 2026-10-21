@@ -54,3 +54,7 @@
   - `oneGoogleBarEnabled` を false
   - 確認: `oneGoogleBarEnabled_` false、`#oneGoogleBar` なし、ショートカットは残る
   - 学び: app.html の条件分岐で iframe 自体が作られない
+- NTP のモジュールを明示的に無効化
+  - `NewTabPageUI::OnLoad()` の `modulesEnabled` を false
+  - 確認: `modulesEnabled_` false、`#modules` なし、ショートカットは残る
+  - 学び: `loadTimeData.getBoolean()` はキーの存在を前提にするため、値だけ変えてキーは残す

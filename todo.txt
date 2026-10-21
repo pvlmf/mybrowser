@@ -4,17 +4,22 @@
 
 ## 進行中
 
-- [ ] Stage 2-6: モジュールを無効化する
-  - 変更案: `NewTabPageUI::OnLoad()` の `modulesEnabled` を false
-  - 確認: `modulesEnabled_` false、`#modules` が出ないこと
-  - その後: モジュールの C++ / WebUI を削除（Remove、別コミット）
+- なし（2026-10-21 に一時中断）
 
+## 次回の候補
+
+- [ ] モジュールのコード削除（Remove）
+  - 対象: `chrome/browser/new_tab_page/modules/`、`resources/new_tab_page/modules/` など
+  - `app.ts` / `app.html` / `update.Set("modulesEnabled", ...)` とセットで消す
 - [ ] Stage 1-2: ブラウザ全体の AI / Google 連携を棚卸しする
   - 対象: 履歴の AI 検索、タブ整理、Optimization Guide、sync / signin など
   - 成果物: `docs/features.md` の台帳（NTP 以外）を埋める
 
 ## 完了（最近）
 
+- [x] Stage 2-6: モジュールを無効化
+  - `NewTabPageUI::OnLoad()` の `modulesEnabled` を false
+  - 確認: `modulesEnabled_` false、`#modules` なし、ショートカットは残る
 - [x] Stage 2-5: OneGoogleBar を無効化
   - `oneGoogleBarEnabled` を false
   - 確認: `oneGoogleBarEnabled_` false、`#oneGoogleBar` なし、ショートカットは残る

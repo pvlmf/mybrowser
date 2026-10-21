@@ -86,7 +86,7 @@ Chromium の更新（特にセキュリティ修正）を追う場合、コー�
 
 | # | 機能 | 説明 | AI | 使う? | 判断 |
 |---|---|---|---|---|---|
-| 1 | モジュール（カード） | ショートカット下のカード（カレンダー、Drive/OneDrive、タブ再開、タブグループ） | 一部 | いいえ | **Remove（全モジュール）**（Google/外部サービス + AI） |
+| 1 | モジュール（カード） | ショートカット下のカード（カレンダー、Drive/OneDrive、タブ再開、タブグループ） | 一部 | いいえ | **無効化済み**（コード削除は Remove 候補、Google/外部サービス + AI） |
 | 2 | composebox | 検索ボックス内の AI 作成・添付 UI | はい | — | **無効化済み**（AI 方針） |
 | 3 | Lens | 画像で検索する機能 | はい | — | **無効化済み**（AI 方針） |
 | 4 | action chips | 検索ボックス下の AI 提案チップ（Deep Search、画像生成など） | はい | — | **無効化済み**（AI 方針） |
@@ -145,11 +145,12 @@ Chromium の更新（特にセキュリティ修正）を追う場合、コー�
 - 確認: `oneGoogleBarEnabled_` false、`#oneGoogleBar` なし、ショートカットは残る
 - 学び: app.html の条件分岐で iframe 自体が作られない
 
-### 次の実装（Stage 2-6: モジュール）
+### 実装済み（Stage 2-6: モジュール）
 
 - 変更: `NewTabPageUI::OnLoad()` の `modulesEnabled` を false
-- 確認: `modulesEnabled_` false、`#modules` なし
-- その後: モジュールの C++ / WebUI を削除（Remove、別コミット）
+- 確認: `modulesEnabled_` false、`#modules` なし、ショートカットは残る
+- 学び: `loadTimeData.getBoolean()` はキーの存在を前提にするため、値だけ変えてキーは残す
+- 次: モジュールの C++ / WebUI を削除（Remove、別コミット）か、ブラウザ全体の棚卸し
 
 ## 台帳（NTP 以外）
 
