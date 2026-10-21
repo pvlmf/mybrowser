@@ -23,13 +23,12 @@ Chromium（`chromium/chromium`）のフォーク `pvlmf/mybrowser` を、学習�
 | [docs/log.md](docs/log.md) | 作業ログ（日付ごとの記録） |
 | [docs/notes/](docs/notes/) | 個別の学びメモ（日付ごと） |
 | [archive/gtp-advice.txt](archive/gtp-advice.txt) | 方針の元になった外部アドバイス |
-
-`AGENTS.md` はリポジトリ外（プロジェクトルート）にあります。
+| [AGENTS.md](AGENTS.md) | エージェント向けのルール |
 
 ## ディレクトリ構成
 
 ```
-src/                  # Chromium 本体（このリポジトリ、dev ブランチ）
+mybrowser/src/        # プロジェクトルート兼リポジトリ（dev ブランチ）
 ├── chrome/           # ブラウザ実装
 ├── docs/             # upstream のドキュメント + mybrowser のメモ
 │   ├── overview.md
@@ -39,14 +38,16 @@ src/                  # Chromium 本体（このリポジトリ、dev ブラン�
 │   └── notes/
 ├── scripts/          # ビルド・起動・監視スクリプト
 ├── archive/          # 参考資料の保管
+├── build-logs/       # ビルドログ（gitignore 済み）
 ├── todo.txt          # 現在のタスク
+├── AGENTS.md         # エージェント向けルール
 └── README.md         # これ
 ```
 
-ビルドログと `AGENTS.md` はプロジェクトルート（リポジトリ外）にあります。
+gclient のメタデータ（`.gclient`, `.cipd` など）だけが親の `mybrowser/` にあります。
 
 ## 現在の状態
 
 - ブランチ: `dev`（`origin/dev` に push 済み）
 - ビルド: Chromium 158.0.8113.0（Release / component build）
-- 直近の変更: 新しいタブページの背景色（コミット `8421ee2fb9`）
+- 直近の変更: ドキュメント・スクリプト・AGENTS.md をリポジトリ内に統合
