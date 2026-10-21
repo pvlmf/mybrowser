@@ -14,7 +14,7 @@
 | `2eb676b83c` | NTP の composebox を無効化 | `new_tab_page_ui.cc` | 中 |
 | `bf7ff8682b` | NTP の Lens・音声検索を無効化 | `new_tab_page_ui.cc` | 中 |
 | `2cc7757f0c` | NTP の realbox next（AI Mode）を無効化 | `composebox_fieldtrial.cc` | 中 |
-| `（本コミット）` | NTP の OneGoogleBar を無効化 | `new_tab_page_ui.cc` | 中 |
+| `acf4ba26fd` | NTP の OneGoogleBar を無効化 | `new_tab_page_ui.cc` | 中 |
 
 ## ビルド・スクリプト
 
