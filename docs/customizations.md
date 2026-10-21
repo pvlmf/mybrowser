@@ -13,6 +13,7 @@
 | `87ce2335cb` | NTP の action chips を無効化 | `new_tab_page_ui.cc` | 中 |
 | `2eb676b83c` | NTP の composebox を無効化 | `new_tab_page_ui.cc` | 中 |
 | `bf7ff8682b` | NTP の Lens・音声検索を無効化 | `new_tab_page_ui.cc` | 中 |
+| `（本コミット）` | NTP の realbox next（AI Mode）を無効化 | `composebox_fieldtrial.cc` | 中 |
 
 ## ビルド・スクリプト
 

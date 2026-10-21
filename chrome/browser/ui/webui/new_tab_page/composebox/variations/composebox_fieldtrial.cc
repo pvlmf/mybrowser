@@ -251,7 +251,7 @@ bool IsNtpRealboxNextEnabled(Profile* profile) {
          aim_eligibility_service->IsFuseboxEligible();
 }
 
-BASE_FEATURE(kNtpRealboxNext, base::FEATURE_ENABLED_BY_DEFAULT);
+BASE_FEATURE(kNtpRealboxNext, base::FEATURE_DISABLED_BY_DEFAULT);
 
 const base::FeatureParam<PlaceholderText>::Option kSteadyPlaceholderOptions[] =
     {

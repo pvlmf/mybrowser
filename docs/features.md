@@ -94,6 +94,7 @@ Chromium の更新（特にセキュリティ修正）を追う場合、コー�
 | 6 | OneGoogleBar | 上部の Google アカウント/アプリバー | いいえ | いいえ | **Hide → Remove**（Google 連携） |
 | 7 | ショートカット | よく使うサイトのタイル | いいえ | はい | **Keep** |
 | 8 | 音声検索 | マイクで音声入力する | いいえ（Google 連携） | いいえ | **無効化済み** |
+| 9 | realbox next（AI Mode） | 検索ボックスの AI Mode 表示 | はい | — | **無効化済み** |
 
 ### 各機能の補足
 
@@ -132,11 +133,17 @@ Chromium の更新（特にセキュリティ修正）を追う場合、コー�
 - 確認: `#lensSearchButton` / `#voiceSearchButton` なし、検索ボックスは残る
 - 学び: 共有コンポーネントはオプションで切り替えると他画面に影響しにくい
 
-### 次の実装（Stage 2-4: realbox next / AI Mode）
+### 実装済み（Stage 2-4: realbox next / AI Mode）
 
-- 候補: `kNtpRealboxNext` のデフォルトを無効化
-- 確認: `ntpRealboxNextEnabled_` が false、AI Mode の表示が出ないこと
-- 注意: omnibox など他の検索ボックスにも影響する（AI を出さない方針なので許容）
+- 変更: `kNtpRealboxNext` のデフォルトを `FEATURE_DISABLED_BY_DEFAULT` に
+- 確認: `ntpRealboxNextEnabled_` false、AI Mode ボタンなし、プレースホルダーが通常検索に戻る
+- 学び: 機能フラグのデフォルトを変えると、派生する値もまとめて false になる
+
+### 次の実装（Stage 2-5: OneGoogleBar）
+
+- 変更: `oneGoogleBarEnabled` を false
+- 確認: NTP 上部に Google アカウントバーが出ないこと
+- 注意: `oneGoogleBarIframePath_` などのコードは残す（Hide 段階）
 
 ## 台帳（NTP 以外）
 

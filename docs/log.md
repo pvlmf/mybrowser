@@ -46,3 +46,7 @@
   - `enable_lens_search` / `enable_voice_search` を false
   - 確認: `#lensSearchButton` / `#voiceSearchButton` なし、検索ボックスは残る
   - 学び: 共有コンポーネントはオプションで切り替えると他画面に影響しにくい
+- NTP の realbox next（AI Mode）を無効化
+  - `kNtpRealboxNext` を `FEATURE_DISABLED_BY_DEFAULT` に
+  - 確認: `ntpRealboxNextEnabled_` false、AI Mode ボタンなし、プレースホルダーが通常検索に戻る
+  - 学び: 機能フラグのデフォルトを変えると派生する値もまとめて false になる
