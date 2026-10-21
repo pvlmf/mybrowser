@@ -1,21 +1,52 @@
-# ![Logo](chrome/app/theme/chromium/product_logo_64.png) Chromium
+# mybrowser
 
-Chromium is an open-source browser project that aims to build a safer, faster,
-and more stable way for all users to experience the web.
+Chromium（`chromium/chromium`）のフォーク `pvlmf/mybrowser` を、学習しながら少しずつ改造していくプロジェクトです。
 
-The project's web site is https://www.chromium.org.
+## クイックスタート
 
-To check out the source code locally, don't use `git clone`! Instead,
-follow [the instructions on how to get the code](docs/get_the_code.md).
+```bash
+# ビルド（差分・自動リトライ付き）
+./scripts/build-chrome.sh
 
-Documentation in the source is rooted in [docs/README.md](docs/README.md).
+# 起動（プロファイル分離）
+./scripts/run-chrome.sh
+```
 
-Learn how to [Get Around the Chromium Source Code Directory
-Structure](https://www.chromium.org/developers/how-tos/getting-around-the-chrome-source-code).
+## ドキュメント
 
-For historical reasons, there are some small top level directories. Now the
-guidance is that new top level directories are for product (e.g. Chrome,
-Android WebView, Ash). Even if these products have multiple executables, the
-code should be in subdirectories of the product.
+| ファイル | 内容 |
+|---|---|
+| [todo.txt](todo.txt) | いま取り組むタスク（作業中はここを見る） |
+| [docs/overview.md](docs/overview.md) | プロジェクトの現状・環境・制約 |
+| [docs/learning-plan.md](docs/learning-plan.md) | 学習ロードマップ（段階と進捗） |
+| [docs/build.md](docs/build.md) | ビルド・実行・トラブルシューティング |
+| [docs/log.md](docs/log.md) | 作業ログ（日付ごとの記録） |
+| [docs/notes/](docs/notes/) | 個別の学びメモ（日付ごと） |
+| [archive/gtp-advice.txt](archive/gtp-advice.txt) | 方針の元になった外部アドバイス |
 
-If you found a bug, please file it at https://crbug.com/new.
+`AGENTS.md` はリポジトリ外（プロジェクトルート）にあります。
+
+## ディレクトリ構成
+
+```
+src/                  # Chromium 本体（このリポジトリ、dev ブランチ）
+├── chrome/           # ブラウザ実装
+├── docs/             # upstream のドキュメント + mybrowser のメモ
+│   ├── overview.md
+│   ├── learning-plan.md
+│   ├── build.md
+│   ├── log.md
+│   └── notes/
+├── scripts/          # ビルド・起動・監視スクリプト
+├── archive/          # 参考資料の保管
+├── todo.txt          # 現在のタスク
+└── README.md         # これ
+```
+
+ビルドログと `AGENTS.md` はプロジェクトルート（リポジトリ外）にあります。
+
+## 現在の状態
+
+- ブランチ: `dev`（`origin/dev` に push 済み）
+- ビルド: Chromium 158.0.8113.0（Release / component build）
+- 直近の変更: 新しいタブページの背景色（コミット `8421ee2fb9`）

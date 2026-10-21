@@ -1,0 +1,35 @@
+# 現在のタスク
+
+方針・環境・ログは docs/ に分離。ここは「いま何をするか」だけを書く。
+
+## 進行中
+
+- [ ] NTP の背景色変更を仕上げる
+  - [x] `display: block` + `background`
+  - [x] CSS 変数化
+  - [x] 背景画像があるときは `transparent`
+  - [ ] 背景画像を設定して動作確認（`docs/notes/2026-10-21-ntp-background.md`）
+  - [ ] 確認後にコミット
+
+## 次にやる（候補）
+
+- [ ] `app.html` を読んで NTP の画面構造を把握
+- [ ] 検索ボックス・ロゴ・モジュールの配置を1つ変えてみる
+- [ ] タブ・ツールバー（`chrome/browser/ui/views/`）を読む
+- [ ] 小さな独自機能の追加（設定 + UI + 本体）
+
+## ルール
+
+- エージェントはコード編集禁止（提案のみ）。todo.txt の更新と管理用スクリプトは可
+- ビルド: `./scripts/build-chrome.sh`
+- 起動: `./scripts/run-chrome.sh`
+- 学びは `docs/notes/` に日付付きで残す
+- コミット・push はエージェント担当
+
+## リンク
+
+- [README](README.md)
+- [現状](docs/overview.md)
+- [学習ロードマップ](docs/learning-plan.md)
+- [ビルド](docs/build.md)
+- [作業ログ](docs/log.md)
