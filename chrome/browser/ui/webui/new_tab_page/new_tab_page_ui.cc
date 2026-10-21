@@ -809,9 +809,8 @@ base::DictValue NewTabPageUI::GetLoadTimeData(
                omnibox::kComposeboxPersistentAimButtonWithX));
 
   dict.Merge(SearchboxHandler::GetWebUIDataSourceDict(
-      profile, {.enable_voice_search = true,
-                .enable_lens_search = profile->GetPrefs()->GetBoolean(
-                    prefs::kLensDesktopNTPSearchEnabled),
+      profile, {.enable_voice_search = false,
+                .enable_lens_search = false,
                 .session_allows_drag_and_drop = session_allows_drag_and_drop}));
 
 // TODO(b/502297163): Implement for Android.

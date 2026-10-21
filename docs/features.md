@@ -87,12 +87,13 @@ Chromium の更新（特にセキュリティ修正）を追う場合、コー�
 | # | 機能 | 説明 | AI | 使う? | 判断 |
 |---|---|---|---|---|---|
 | 1 | モジュール（カード） | ショートカット下のカード（カレンダー、Drive/OneDrive、タブ再開、タブグループ） | 一部 | いいえ | **Remove（全モジュール）**（Google/外部サービス + AI） |
-| 2 | composebox | 検索ボックス内の AI 作成・添付 UI | はい | — | Hide → Remove（AI 方針） |
-| 3 | Lens | 画像で検索する機能 | はい | — | Hide → Disable（AI 方針） |
-| 4 | action chips | 検索ボックス下の AI 提案チップ（Deep Search、画像生成など） | はい | — | Hide → Remove（AI 方針） |
+| 2 | composebox | 検索ボックス内の AI 作成・添付 UI | はい | — | **無効化済み**（AI 方針） |
+| 3 | Lens | 画像で検索する機能 | はい | — | **無効化済み**（AI 方針） |
+| 4 | action chips | 検索ボックス下の AI 提案チップ（Deep Search、画像生成など） | はい | — | **無効化済み**（AI 方針） |
 | 5 | カスタマイズ（背景・テーマ） | 背景・テーマ・ショートカット表示の設定 | いいえ | はい | Keep |
 | 6 | OneGoogleBar | 上部の Google アカウント/アプリバー | いいえ | いいえ | **Hide → Remove**（Google 連携） |
 | 7 | ショートカット | よく使うサイトのタイル | いいえ | はい | **Keep** |
+| 8 | 音声検索 | マイクで音声入力する | いいえ（Google 連携） | いいえ | **無効化済み** |
 
 ### 各機能の補足
 
@@ -125,11 +126,17 @@ Chromium の更新（特にセキュリティ修正）を追う場合、コー�
 - 確認: compose ボタンなし、composebox なし、検索ボックスは残る
 - 学び: `loadTimeData` のキー名とプロパティ名は一致しないことがある
 
-### 次の実装（Stage 2-3: Lens）
+### 実装済み（Stage 2-3: Lens / 音声検索）
 
-- 変更: `GetWebUIDataSourceDict` の `enable_lens_search` を false
-- 確認: `#lensSearchButton` が出ないこと、通常の検索は動くこと
-- 注意: Lens は omnibox と共有するコードがあるため、NTP のオプションだけを false にする
+- 変更: `GetWebUIDataSourceDict` の `enable_lens_search` と `enable_voice_search` を false
+- 確認: `#lensSearchButton` / `#voiceSearchButton` なし、検索ボックスは残る
+- 学び: 共有コンポーネントはオプションで切り替えると他画面に影響しにくい
+
+### 次の実装（Stage 2-4: realbox next / AI Mode）
+
+- 候補: `kNtpRealboxNext` のデフォルトを無効化
+- 確認: `ntpRealboxNextEnabled_` が false、AI Mode の表示が出ないこと
+- 注意: omnibox など他の検索ボックスにも影響する（AI を出さない方針なので許容）
 
 ## 台帳（NTP 以外）
 

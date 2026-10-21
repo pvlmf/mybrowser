@@ -42,3 +42,7 @@
   - `searchboxShowComposeEntrypoint` / `searchboxShowComposebox` を false
   - 確認: compose ボタンなし、composebox なし、検索ボックスは残る
   - 学び: `loadTimeData` のキー名とプロパティ名は一致しないことがある
+- NTP の Lens と音声検索を無効化
+  - `enable_lens_search` / `enable_voice_search` を false
+  - 確認: `#lensSearchButton` / `#voiceSearchButton` なし、検索ボックスは残る
+  - 学び: 共有コンポーネントはオプションで切り替えると他画面に影響しにくい

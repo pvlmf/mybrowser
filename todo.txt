@@ -4,9 +4,9 @@
 
 ## 進行中
 
-- [ ] Stage 2-3: Lens を無効化する
-  - 変更案: `GetWebUIDataSourceDict` の `enable_lens_search` を false
-  - 確認: `#lensSearchButton` が出ないこと、通常の検索は動くこと
+- [ ] Stage 2-4: realbox next（AI Mode）を無効化する
+  - 変更候補: `kNtpRealboxNext` のデフォルトを `FEATURE_DISABLED_BY_DEFAULT` に
+  - 確認: NTP の検索ボックスが通常表示になり、AI Mode が出ないこと
 
 - [ ] Stage 1-2: ブラウザ全体の AI / Google 連携を棚卸しする
   - 対象: 履歴の AI 検索、タブ整理、Optimization Guide、sync / signin など
@@ -14,6 +14,9 @@
 
 ## 完了（最近）
 
+- [x] Stage 2-3: Lens と音声検索を無効化
+  - `enable_lens_search` / `enable_voice_search` を false
+  - 確認: `#lensSearchButton` / `#voiceSearchButton` なし、検索ボックスは残る
 - [x] Stage 2-2: composebox を無効化
   - `searchboxShowComposeEntrypoint` / `searchboxShowComposebox` を false
   - 確認: compose ボタンなし、composebox なし、検索ボックスは残る
