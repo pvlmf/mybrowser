@@ -11,7 +11,8 @@
  * #css_wrapper_metadata_end */
 
 :host {
-    display: block;
+  display: block;
+    --mybrowser-ntp-background: lightgreen;
   --cr-composebox-input-placeholder-color: var(
     --color-new-tab-page-common-input-placeholder
   );
@@ -37,7 +38,7 @@
   --ntp-scrim-opacity_: 1;
 
   /*新しいタブの背景色*/
-  background: blue;
+  background: var(--mybrowser-ntp-background);
 
 <if expr="is_android">
   /* Use Google Sans Text for the NTP realbox on Android. The @font-face
@@ -115,6 +116,7 @@ cr-most-visited {
     0px 0px 10px rgba(0, 0, 0, 0.1);
   --ntp-protected-icon-background-color: rgba(0, 0, 0, 0.6);
   --ntp-protected-icon-background-color-hovered: rgba(0, 0, 0, 0.7);
+  background: transparent;
 }
 
 /* The styles to create a stacking context for the OGB-related elements.
