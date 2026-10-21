@@ -11,6 +11,7 @@
  * #css_wrapper_metadata_end */
 
 :host {
+    display: block;
   --cr-composebox-input-placeholder-color: var(
     --color-new-tab-page-common-input-placeholder
   );
@@ -34,6 +35,9 @@
   --ntp-protected-icon-background-color: transparent;
   --ntp-protected-icon-background-color-hovered: rgba(255, 255, 255, 0.1);
   --ntp-scrim-opacity_: 1;
+
+  /*新しいタブの背景色*/
+  background: blue;
 
 <if expr="is_android">
   /* Use Google Sans Text for the NTP realbox on Android. The @font-face
