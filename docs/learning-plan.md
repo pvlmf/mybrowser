@@ -22,7 +22,7 @@
 3. 変更したらビルドして目で確認
 4. 1機能 = 1コミット、学びは `docs/notes/` に残す
 5. 全コードは読まない。必要になった場所だけ
-6. AI 機能は極力出さない（[features.md](features.md) の方針）
+6. AI 機能と Google 連携は極力出さない（[features.md](features.md) の方針）
 
 ## ステージ
 

@@ -73,35 +73,54 @@ Chromium の更新（特にセキュリティ修正）を追う場合、コー�
 - 深い AI サービスは GN args / feature flags で無効化し、コードは消さない（上流追従のため）
 - 新しい AI 機能が上流に入ってきたら、同じ方針で無効化する
 
+## Google 連携の方針
+
+- Google アカウント・Google サービスとの連携を極力削る
+- ここでいう「Google 連携」は、アカウント・サービス連携を指す。検索エンジンとしての Google は別項目として扱う
+- 対象: OneGoogleBar、Google サービス系モジュール（カレンダー、Drive）、Google AI（composebox、Lens、action chips）、sync / signin など
+- 残す: Safe Browsing、コンポーネント更新（セキュリティ・安定性のため）
+- 順番: Hide → Disable → Remove。深い連携は GN args / feature flags で無効化
+- 検索エンジンを Google 以外に変えるかは、別途決める
+
 ## 最初の対象: NTP（Stage 1 の入口）
 
 | # | 機能 | 説明 | AI | 使う? | 判断 |
 |---|---|---|---|---|---|
-| 1 | モジュール（カード） | ショートカット下のカード（カレンダー、Drive/OneDrive、タブ再開、タブグループ） | 一部 | ? | AI 系は Hide/Remove 候補 |
+| 1 | モジュール（カード） | ショートカット下のカード（カレンダー、Drive/OneDrive、タブ再開、タブグループ） | 一部 | いいえ | **Remove（全モジュール）**（Google/外部サービス + AI） |
 | 2 | composebox | 検索ボックス内の AI 作成・添付 UI | はい | — | Hide → Remove（AI 方針） |
 | 3 | Lens | 画像で検索する機能 | はい | — | Hide → Disable（AI 方針） |
 | 4 | action chips | 検索ボックス下の AI 提案チップ（Deep Search、画像生成など） | はい | — | Hide → Remove（AI 方針） |
 | 5 | カスタマイズ（背景・テーマ） | 背景・テーマ・ショートカット表示の設定 | いいえ | はい | Keep |
-| 6 | OneGoogleBar | 上部の Google アカウント/アプリバー | いいえ | ? | 保留（AI ではない） |
+| 6 | OneGoogleBar | 上部の Google アカウント/アプリバー | いいえ | いいえ | **Hide → Remove**（Google 連携） |
 | 7 | ショートカット | よく使うサイトのタイル | いいえ | はい | **Keep** |
 
 ### 各機能の補足
 
-- **モジュール**: `chrome/browser/resources/new_tab_page/modules/`。カレンダー、Drive/OneDrive のファイル提案、最近のタブの再開、タブグループなど。タブ再開・ファイル提案はランキング/ML を使うため AI 系として扱う。
+- **モジュール**: `chrome/browser/resources/new_tab_page/modules/`。カレンダー、Drive/OneDrive のファイル提案、最近のタブの再開、タブグループなど。タブ再開・ファイル提案はランキング/ML を使うため AI 系として扱う。方針: 全モジュールを Remove 候補（Google/外部サービス + AI）。使うものがあれば個別に残す。
 - **composebox**: `ntp_composebox.*`、`chrome/browser/ui/webui/new_tab_page/composebox/`。フラグ `ntp_composebox::kNtpComposebox`（デフォルト有効）。
 - **Lens**: `lens_form.*`、`lens_upload_dialog.*`、`components/lens/`。フラグ `lens::kLensStandalone` など。omnibox と共有する部分があるため、コード削除は慎重に。
 - **action chips**: `new_tab_page/action_chips/`、C++ 側 `chrome/browser/ui/webui/new_tab_page/action_chips/`。`AimEligibilityService` の eligibility で表示される AI Mode の機能。
 - **カスタマイズ**: `customize_buttons_proxy.ts`、`side_panel/customize_chrome/`。背景画像・テーマに必要なので Keep。
-- **OneGoogleBar**: `chrome/browser/new_tab_page/one_google_bar/`。AI ではないが、Google 連携を減らしたいなら Hide 候補。
+- **OneGoogleBar**: `chrome/browser/new_tab_page/one_google_bar/`。方針: 使わないので Hide → Remove（Google 連携）。
 - **ショートカット**: `cr-most-visited`（共有コンポーネント）。`ntp_features::kNtpShortcuts`。
 
-### 次に決めること
+### 決定事項（2026-10-21）
 
-1. モジュールを全部消すか、カレンダーなど残すか
-2. OneGoogleBar を残すか
-3. AI 機能をまず Hide するか、いきなり Disable まで進めるか
+- AI 機能は出さない（Hide → Disable → Remove）
+- Google 連携も極力削る（同上）
+- モジュールは全削除する（使うものが出てきたら個別に戻す）
+- OneGoogleBar は削除する
+- カスタマイズとショートカットは Keep
+- 最初の実装は action chips の無効化
 
-## 台帳（記入式）
+### 次の実装（Stage 2-1: action chips）
+
+- 変更: `AreActionChipsEnabled()` の先頭で `return false;`
+- 理由: `actionChipsEnabled` が false なら `app.html` が `<ntp-action-chips>` を作らないため、UI も取得処理も止まる
+- 確認: ビルド → NTP を開く → チップが出ない → DevTools で `ntp-action-chips` が無い
+- その後: `action_chips/` と参照を削除（Remove、別コミット）
+
+## 台帳（NTP 以外）
 
 | # | 機能 | 使う? | 判断 | 場所 | 依存 | リスク | 状態 |
 |---|---|---|---|---|---|---|---|

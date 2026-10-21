@@ -4,12 +4,20 @@
 
 ## 進行中
 
-- [ ] Stage 1-1: NTP の機能をリスト化する
-  - 対象: モジュール、composebox、Lens、action chips、カスタマイズ、OneGoogleBar、ショートカット
-  - やること: 使う／使わないを付け、コードの場所を調べる
-  - 成果物: `docs/features.md` の台帳を埋める
+- [ ] Stage 2-1: action chips を無効化する
+  - 変更案: `AreActionChipsEnabled()` の先頭で `return false;`
+  - 確認: ビルド → NTP でチップが出ないこと
+  - その後: `action_chips/` の削除（Remove）を別コミットで
+
+- [ ] Stage 1-2: ブラウザ全体の AI / Google 連携を棚卸しする
+  - 対象: 履歴の AI 検索、タブ整理、Optimization Guide、sync / signin など
+  - 成果物: `docs/features.md` の台帳（NTP 以外）を埋める
 
 ## 完了（最近）
+
+- [x] Stage 1-1: NTP の機能をリスト化し、使う／使わないを決定
+  - モジュール: 全削除、OneGoogleBar: 削除、カスタマイズ: Keep、ショートカット: Keep
+  - AI / Google 連携の方針を `docs/features.md` に追加
 
 - [x] NTP に「mybrowser」ラベルを追加
   - 検索ボックス直下に中央揃えで表示（テキストは `thisismybrowser`）
