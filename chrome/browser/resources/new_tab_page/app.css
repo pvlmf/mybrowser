@@ -82,7 +82,7 @@
 
 @container rhsWrapper (min-width: 900px) {
   #rhsContent {
-    --ntp-search-box-width: 746px;
+    --ntp-search-box-width: 1520px;
   }
 }
 
