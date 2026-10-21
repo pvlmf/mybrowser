@@ -10,6 +10,7 @@
 | `8421ee2fb9` | 背景色の変数化・背景画像対応 | `app.css` | 中 |
 | `ff94803d51` | 検索ボックスの幅 | `app.css` | 中 |
 | `3f02973678` | NTP ラベル | `app.html`、`app.css` | 中 |
+| `（本コミット）` | NTP の action chips を無効化 | `new_tab_page_ui.cc` | 中 |
 
 ## ビルド・スクリプト
 

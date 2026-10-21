@@ -34,3 +34,7 @@
   - コミット: `bec03c9512`, `7fbcaa24c6`, `bb62b2f2cb`
 - 検索ボックスの幅を変更（広い画面で 1520px）
 - NTP に「thisismybrowser」ラベルを追加（HTML + CSS）
+- NTP の action chips を無効化（AI / Google 連携方針の最初の実装）
+  - `AreActionChipsEnabled()` を false 固定
+  - 確認: NTP 表示、`thisismybrowser` ラベルあり、`ntp-action-chips` なし、`isActionChipsVisible_` false
+  - 学び: C++ → `loadTimeData` → Lit の流れ。shadow DOM は `ntp-app.shadowRoot` から確認

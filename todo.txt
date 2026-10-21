@@ -4,10 +4,10 @@
 
 ## 進行中
 
-- [ ] Stage 2-1: action chips を無効化する
-  - 変更案: `AreActionChipsEnabled()` の先頭で `return false;`
-  - 確認: ビルド → NTP でチップが出ないこと
-  - その後: `action_chips/` の削除（Remove）を別コミットで
+- [ ] Stage 2-2: composebox を無効化する
+  - 候補1: `searchboxShowComposebox` を false（NTP の入口だけ隠す）
+  - 候補2: `IsNtpComposeboxEnabled()` を false 固定（realbox next も止まる）
+  - 確認: NTP の検索ボックスが通常表示になり、composebox が出ないこと
 
 - [ ] Stage 1-2: ブラウザ全体の AI / Google 連携を棚卸しする
   - 対象: 履歴の AI 検索、タブ整理、Optimization Guide、sync / signin など
@@ -15,6 +15,9 @@
 
 ## 完了（最近）
 
+- [x] Stage 2-1: action chips を無効化
+  - `AreActionChipsEnabled()` を false 固定
+  - 確認: `ntp-action-chips` なし、`isActionChipsVisible_` false
 - [x] Stage 1-1: NTP の機能をリスト化し、使う／使わないを決定
   - モジュール: 全削除、OneGoogleBar: 削除、カスタマイズ: Keep、ショートカット: Keep
   - AI / Google 連携の方針を `docs/features.md` に追加

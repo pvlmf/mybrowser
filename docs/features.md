@@ -113,12 +113,17 @@ Chromium の更新（特にセキュリティ修正）を追う場合、コー�
 - カスタマイズとショートカットは Keep
 - 最初の実装は action chips の無効化
 
-### 次の実装（Stage 2-1: action chips）
+### 実装済み（Stage 2-1: action chips）
 
-- 変更: `AreActionChipsEnabled()` の先頭で `return false;`
-- 理由: `actionChipsEnabled` が false なら `app.html` が `<ntp-action-chips>` を作らないため、UI も取得処理も止まる
-- 確認: ビルド → NTP を開く → チップが出ない → DevTools で `ntp-action-chips` が無い
+- 変更: `AreActionChipsEnabled()` を `return false;` に固定
+- 確認: NTP 表示、`thisismybrowser` ラベルあり、`ntp-action-chips` なし、`isActionChipsVisible_` false
 - その後: `action_chips/` と参照を削除（Remove、別コミット）
+
+### 次の実装（Stage 2-2: composebox）
+
+- 候補1: `searchboxShowComposebox` を false（NTP の入口だけ隠す）
+- 候補2: `IsNtpComposeboxEnabled()` を false 固定（realbox next も止まる）
+- 確認: NTP の検索ボックスが通常表示になり、composebox が出ないこと
 
 ## 台帳（NTP 以外）
 

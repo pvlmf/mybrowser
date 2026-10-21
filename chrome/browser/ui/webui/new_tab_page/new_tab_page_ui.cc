@@ -208,37 +208,7 @@ bool HasCredentials(Profile* profile) {
 
 // Returns whether the action chips are shown on the NTP.
 bool AreActionChipsEnabled(Profile* profile) {
-  const auto* aim_eligibility_service =
-      AimEligibilityServiceFactory::GetForProfile(profile);
-  int num_tools_eligible = 0;
-  if (aim_eligibility_service) {
-    if (aim_eligibility_service->IsDeepSearchEligible()) {
-      num_tools_eligible++;
-    }
-    if (aim_eligibility_service->IsCreateImagesEligible()) {
-      num_tools_eligible++;
-      if (base::FeatureList::IsEnabled(ntp_features::kNtpStarterChip)) {
-        num_tools_eligible++;
-      }
-    }
-    if (base::FeatureList::IsEnabled(ntp_features::kNtpNextCanvasChip) &&
-        aim_eligibility_service->IsCanvasEligible()) {
-      num_tools_eligible++;
-    }
-  }
-  bool ntp_next_features_enabled =
-      ntp_realbox::IsNtpRealboxNextEnabled(profile) &&
-      base::FeatureList::IsEnabled(ntp_features::kNtpNextFeatures);
-  bool action_chips_eligible =
-      ntp_next_features_enabled &&
-      ((base::FeatureList::IsEnabled(ntp_features::kNtpScaledActionChips) ||
-        base::FeatureList::IsEnabled(
-            ntp_features::kNtpScaledActionChipsSmall)) ||
-       (aim_eligibility_service && aim_eligibility_service->IsAimEligible() &&
-        num_tools_eligible >= 2));
-  return action_chips_eligible &&
-         (!ntp_features::kNtpNextDisablementParam.Get() ||
-          profile->GetPrefs()->GetBoolean(prefs::kNtpToolChipsVisible));
+  return false;
 }
 
 // Returns whether the 2026 version of the Google logo is used.
