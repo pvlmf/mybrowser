@@ -4,7 +4,10 @@
 
 ## 進行中
 
-- なし（下の候補から選ぶ）
+- [ ] Stage 1-1: NTP の機能をリスト化する
+  - 対象: モジュール、composebox、Lens、action chips、カスタマイズ、OneGoogleBar、ショートカット
+  - やること: 使う／使わないを付け、コードの場所を調べる
+  - 成果物: `docs/features.md` の台帳を埋める
 
 ## 完了（最近）
 
