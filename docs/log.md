@@ -83,3 +83,29 @@
   - 学び: `app.html` から要素を外すだけなら `app.ts` は未使用コードとして残せる。ただし `app.ts` 内の `$$(this, '#modules')` は null を返すだけで安全
   - 新規プロファイルではショートカットが「ウェブストア」になる。初回起動時は `chrome://intro/welcome` が出るが、`--no-first-run` で回避でき、今回の変更とは無関係
   - コミット: `3a094f68ce`
+
+## 2026-10-22
+
+- NTP モジュール削除 Phase 1a-2: `app.ts` からモジュール用ロジックを削除
+  - `modulesEnabled_` / `modulesLoaded_` / `modulesLoadedStatus_` / `modulesShownToUser` を削除
+  - Microsoft Auth 用の `ParentTrustedDocumentProxy` import、`MSAL_IFRAME_ORIGIN`、`connectToParentDocument` リスナーを削除
+  - `computeModulesLoaded_` / `onModulesLoadedChange_` / `onModulesLoaded_` / `computeShowBrowserPromo_` / `onCustomizeModule_` / `onModulesShownToUserChanged_` / `onModulesAutoRemoved_` を削除
+  - `app.html` のプロモ表示条件を `showBrowserPromo_ && browserPromoType_ === 'simple'` から `browserPromoType_ === 'simple'` に変更
+  - `recordBrowserPromoMetrics_()` は `firstUpdated()` で常に呼ぶようにし、`showBrowserPromo_` による早期 return を削除
+  - `NtpElement.MODULE = 7` と `NtpCustomizeChromeEntryPoint.MODULE = 1` は履歴値なので残した
+  - `CustomizeDialogPage.MODULES` は `new_tab_footer/app.ts` が参照しているため残し、`app.ts` 内の case のみ削除した
+  - 確認: `PATH="$HOME/depot_tools:$PATH" autoninja -C out/Release chrome/browser/resources/new_tab_page:build_ts` 成功
+  - 確認: `PATH="$HOME/depot_tools:$PATH" autoninja -C out/Release chrome/test/data/webui/new_tab_page:build_ts` 成功
+  - 確認: `./scripts/build-chrome.sh` 成功（18:45）
+  - 確認: 新規プロファイル + `--no-first-run` + `--headless=new` で `chrome://new-tab-page/` を開き、CDP で `ntp-app.shadowRoot` を検査
+    - `#modules`、`ntp-modules`、`iframe#microsoftAuth`: なし
+    - `cr-most-visited`、`ntp-customize-buttons`、`#mybrowserLabel`、`ntp-searchbox`: あり
+    - `#mybrowserLabel` のテキスト: `thisismybrowser`
+    - `'showBrowserPromo_' in app`: false（プロパティ自体が消えている）
+    - `'modulesEnabled_' in app` / `'modulesLoaded_' in app` / `'microsoftModuleEnabled_' in app`: false
+    - `browserPromoType_`: `disabled`、`individual-promos`: なし
+  - 確認: ブラウザログに `CONSOLE` / `Uncaught` / `TypeError` / `ReferenceError` / `SyntaxError` なし
+  - 補足: 表示条件の直接確認のため `app.browserPromoType_ = 'simple'` を一時代入したところ、`individual-promos` が呼ぶ `NtpPromoHandler::RequestPromos()` の CHECK でブラウザが abort した。これはプロモを強制表示した場合の既存 C++ 経路で、通常設定（`disabled`）では発生しない。プロモを有効化する場合は別途調査する
+  - 学び: `showBrowserPromo_` は「モジュールが読み込み中か」を考慮するためだけの値だった。モジュールを消したので、テンプレートは `browserPromoType_` だけで判定できる
+  - 学び: enum の値を消すと `enums.xml` の履歴とずれる。未使用になっても、記録済みの値は残す
+  - 次の作業: Phase 1a-3/1b（`modules/` の WebUI リソース、`lazy_load.ts`、GN の参照削除）

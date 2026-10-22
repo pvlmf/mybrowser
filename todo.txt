@@ -6,8 +6,8 @@
 
 - [ ] モジュール削除計画（Stage 2-7）
   - 計画: `docs/notes/2026-10-22-modules-removal-plan.md`
-  - 次: Phase 1a（`app.html` / `app.ts` からモジュール UI を外す）
-  - その次: Phase 1b（`modules/` の WebUI リソースとテストを削除）
+  - 完了: Phase 1a-1（モジュール DOM 削除）、Phase 1a-2（`app.ts` のモジュールロジック削除）
+  - 次: Phase 1a-3/1b（`modules/` の WebUI リソース、`lazy_load.ts`、GN の参照削除）
   - C++ バックエンドの削除は、上流との衝突コストを見てから決める
 
 ## 次回の候補
