@@ -4,11 +4,14 @@
 
 ## 進行中
 
-- [ ] モジュール削除計画（Stage 2-7）
+- [ ] NTP モジュール削除 Phase 1 を完了する
   - 計画: `docs/notes/2026-10-22-modules-removal-plan.md`
   - 完了: Phase 1a-1（モジュール DOM 削除）、Phase 1a-2（`app.ts` のモジュールロジック削除）
-  - 次: Phase 1a-3/1b（`modules/` の WebUI リソース、`lazy_load.ts`、GN の参照削除）
-  - C++ バックエンドの削除は、上流との衝突コストを見てから決める
+  - 次の小タスク（Phase 1a-3）: `app.html`、`customize_dialog_types.ts`、`app_test.ts` などに残るモジュール専用参照とテストを棚卸しし、削除対象を確定する
+  - 次（Phase 1b-1）: `lazy_load.ts` のモジュール import / export と `new_tab_page.gni` / `BUILD.gn` の参照を整理する
+  - 次（Phase 1b-2）: 参照の整理後に `modules/**` と WebUI モジュールテストを削除する
+  - 完了条件: モジュール専用の WebUI 参照・ビルド依存・テストが残っていないことを検索で確認し、関連 TypeScript ターゲットとフルビルド、実ブラウザで NTP の検索・ショートカット・ラベル・カスタマイズが維持されることを確認する
+  - 今回の範囲では C++ / Mojo / prefs / モジュールバックエンドを削除しない。Phase 1 完了後に、上流追従コストと削減効果を比較して判断する
 
 ## 次回の候補
 
