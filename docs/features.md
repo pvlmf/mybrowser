@@ -152,6 +152,12 @@ Chromium の更新（特にセキュリティ修正）を追う場合、コー�
 - 学び: `loadTimeData.getBoolean()` はキーの存在を前提にするため、値だけ変えてキーは残す
 - 次: モジュールの C++ / WebUI を削除（Remove、別コミット）か、ブラウザ全体の棚卸し
 
+### 次の実装（Stage 2-7: モジュール削除）
+
+- 計画: [notes/2026-10-22-modules-removal-plan.md](notes/2026-10-22-modules-removal-plan.md)
+- 最初は Phase 1a + 1b（NTP の WebUI からモジュールを外し、リソースを削除）
+- C++ バックエンドの削除は、上流との衝突コストを見てから決める
+
 ## 台帳（NTP 以外）
 
 | # | 機能 | 使う? | 判断 | 場所 | 依存 | リスク | 状態 |

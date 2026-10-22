@@ -58,3 +58,8 @@
   - `NewTabPageUI::OnLoad()` の `modulesEnabled` を false
   - 確認: `modulesEnabled_` false、`#modules` なし、ショートカットは残る
   - 学び: `loadTimeData.getBoolean()` はキーの存在を前提にするため、値だけ変えてキーは残す
+- NTP モジュールの削除計画を作成（コード変更なし）
+  - `docs/notes/2026-10-22-modules-removal-plan.md`
+  - WebUI / Mojo / C++ / prefs / フラグ / テストの依存を整理
+  - 最初は Phase 1a + 1b（WebUI の削除）を推奨
+  - ビルド・実ブラウザ確認はコード変更時に行うため、今回はなし

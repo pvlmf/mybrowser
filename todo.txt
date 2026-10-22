@@ -4,13 +4,14 @@
 
 ## 進行中
 
-- なし（2026-10-21 に一時中断）
+- [ ] モジュール削除計画（Stage 2-7）
+  - 計画: `docs/notes/2026-10-22-modules-removal-plan.md`
+  - 次: Phase 1a（`app.html` / `app.ts` からモジュール UI を外す）
+  - その次: Phase 1b（`modules/` の WebUI リソースとテストを削除）
+  - C++ バックエンドの削除は、上流との衝突コストを見てから決める
 
 ## 次回の候補
 
-- [ ] モジュールのコード削除（Remove）
-  - 対象: `chrome/browser/new_tab_page/modules/`、`resources/new_tab_page/modules/` など
-  - `app.ts` / `app.html` / `update.Set("modulesEnabled", ...)` とセットで消す
 - [ ] Stage 1-2: ブラウザ全体の AI / Google 連携を棚卸しする
   - 対象: 履歴の AI 検索、タブ整理、Optimization Guide、sync / signin など
   - 成果物: `docs/features.md` の台帳（NTP 以外）を埋める
