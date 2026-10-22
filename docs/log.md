@@ -63,3 +63,22 @@
   - WebUI / Mojo / C++ / prefs / フラグ / テストの依存を整理
   - 最初は Phase 1a + 1b（WebUI の削除）を推奨
   - ビルド・実ブラウザ確認はコード変更時に行うため、今回はなし
+- NTP モジュール削除 Phase 1a-1: `app.html` / `app.css` からモジュール DOM を削除
+  - `<ntp-modules>`、Microsoft Auth iframe、`#modules` 用 CSS、`ntp-customize-buttons` の modules バインディングを削除
+  - `app.ts` のモジュール処理は次の 1a-2 で削除するため、今回は残した
+  - `app_test.ts` からモジュール専用テストを削除し、undo toast のテストを shortcuts ベースに変更
+  - 確認: `autoninja -C out/Release chrome/test/data/webui/new_tab_page:build_ts` 成功
+  - 確認: `./scripts/build-chrome.sh` 成功（18:02）
+  - 確認: 新規プロファイル + `--no-first-run` で `chrome://new-tab-page/` を開き、CDP で `ntp-app` の shadow root を検査
+    - `#modules`: なし
+    - `ntp-modules`: なし
+    - `iframe#microsoftAuth`: なし
+    - `cr-most-visited`: あり
+    - `ntp-customize-buttons`: あり
+    - `#mybrowserLabel`: `thisismybrowser`
+    - `ntp-searchbox`: あり
+    - `modulesEnabled_`: false、`modulesLoaded_`: true、`showBrowserPromo_`: true
+  - 確認: ブラウザログに `CONSOLE` / `Uncaught` / `TypeError` / `ReferenceError` / `SyntaxError` なし
+  - 学び: `chrome` ビルドだけでは WebUI テストの TypeScript は検証されない。テスト変更時は `...:build_ts` も実行する
+  - 学び: `app.html` から要素を外すだけなら `app.ts` は未使用コードとして残せる。ただし `app.ts` 内の `$$(this, '#modules')` は null を返すだけで安全
+  - 新規プロファイルではショートカットが「ウェブストア」になる。初回起動時は `chrome://intro/welcome` が出るが、`--no-first-run` で回避でき、今回の変更とは無関係

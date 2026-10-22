@@ -3,8 +3,8 @@
 // found in the LICENSE file.
 
 import {ActionChipsApiProxyImpl, VoiceSearchAction} from 'chrome://new-tab-page/lazy_load.js';
-import type {ActionChipClickDetail, ComposeboxFuseboxActionRequest, Module} from 'chrome://new-tab-page/lazy_load.js';
-import {ActionChipsRetrievalState, ComposeboxProxyImpl, counterfactualLoad, ModuleDescriptor, ModuleRegistry, NtpComposeboxElement} from 'chrome://new-tab-page/lazy_load.js';
+import type {ActionChipClickDetail, ComposeboxFuseboxActionRequest} from 'chrome://new-tab-page/lazy_load.js';
+import {ActionChipsRetrievalState, ComposeboxProxyImpl, NtpComposeboxElement} from 'chrome://new-tab-page/lazy_load.js';
 import {ActionChipsHandlerRemote, ActionChipsPageCallbackRouter, IconType, InputSource, QueryActionOverride, SearchboxOverride} from 'chrome://new-tab-page/new_tab_page.js';
 import type {ActionChipsPageRemote, CustomizeButtonsDocumentRemote, FuseboxAction, TabInfo} from 'chrome://new-tab-page/new_tab_page.js';
 import {$$, BackgroundManager, BrowserCommandProxy, CONTEXTUAL_ENTRYPOINT_ELEMENT_ID, CUSTOMIZE_CHROME_BUTTON_ELEMENT_ID, CustomizeButtonsDocumentCallbackRouter, CustomizeButtonsHandlerRemote, CustomizeButtonsProxy, CustomizeChromeSection, CustomizeDialogPage, GlifAnimationState, NewTabPageProxy, NtpCustomizeChromeEntryPoint, NtpElement, SearchboxBrowserProxy, SidePanelOpenTrigger, VoiceAction, WindowProxy} from 'chrome://new-tab-page/new_tab_page.js';
@@ -20,7 +20,6 @@ import type {CrToastElement} from 'chrome://resources/cr_elements/cr_toast/cr_to
 import {Command, CommandHandlerRemote} from 'chrome://resources/js/browser_command.mojom-webui.js';
 import {loadTimeData} from 'chrome://resources/js/load_time_data.js';
 import {isMac} from 'chrome://resources/js/platform.js';
-import {PromiseResolver} from 'chrome://resources/js/promise_resolver.js';
 import {getDeepActiveElement} from 'chrome://resources/js/util.js';
 import {SuggestInventory} from 'chrome://resources/mojo/components/omnibox/browser/fusebox_action.mojom-webui.js';
 import {PageCallbackRouter as SearchboxPageCallbackRouter, PageHandlerRemote as SearchboxPageHandlerRemote, TabAttachmentSource} from 'chrome://resources/mojo/components/omnibox/browser/searchbox.mojom-webui.js';
@@ -58,9 +57,7 @@ suite('NewTabPageAppTest', () => {
   let customizeButtonsHandler: TestMock<CustomizeButtonsHandlerRemote>;
   let customizeButtonsCallbackRouterRemote: CustomizeButtonsDocumentRemote;
   let metrics: MetricsTracker;
-  let moduleRegistry: TestMock<ModuleRegistry>;
   let backgroundManager: TestMock<BackgroundManager>;
-  let moduleResolver: PromiseResolver<Module[]>;
   let searchboxHandler: TestMock<SearchboxPageHandlerRemote>;
 
   const url: URL = new URL(location.href);
@@ -84,10 +81,6 @@ suite('NewTabPageAppTest', () => {
     handler.setPromiseResolveFor('getDoodle', {
       doodle: null,
     });
-    handler.setPromiseResolveFor('getModulesIdNames', {data: []});
-    handler.setPromiseResolveFor('getModulesOrder', {data: []});
-    handler.setPromiseResolveFor(
-        'getModulesEligibleForRemoval', {moduleIds: []});
     handler.setPromiseResolveFor(
         'canShowRealboxContextMenuAnimation', {canShow: false});
     windowProxy.setResultMapperFor(
@@ -110,9 +103,6 @@ suite('NewTabPageAppTest', () => {
     backgroundManager = installMock(BackgroundManager);
     backgroundManager.setPromiseResolveFor(
         'getBackgroundImageLoadTime', backgroundImageLoadTime);
-    moduleRegistry = installMock(ModuleRegistry);
-    moduleResolver = new PromiseResolver();
-    moduleRegistry.setResultFor('initializeModules', moduleResolver.promise);
     metrics = fakeMetricsPrivate();
 
     installMock(
@@ -179,7 +169,6 @@ suite('NewTabPageAppTest', () => {
   function getScrim(): HTMLElement|null {
     return app.shadowRoot.querySelector<HTMLElement>('#scrim');
   }
-
   suite('Misc', () => {
     suiteSetup(() => {
       loadTimeData.overrideValues({
@@ -778,18 +767,12 @@ suite('NewTabPageAppTest', () => {
   });
 
   suite('Clicks', () => {
-    suiteSetup(() => {
-      loadTimeData.overrideValues({
-        modulesEnabled: true,
-      });
-    });
 
     ([
       ['#rhsContent', NtpElement.BACKGROUND],
       ['ntp-logo', NtpElement.LOGO],
       ['ntp-searchbox', NtpElement.REALBOX],
       ['cr-most-visited', NtpElement.MOST_VISITED],
-      ['#modules', NtpElement.MODULE],
     ] as Array<[string, NtpElement]>)
         .forEach(([selector, element]) => {
           test(`clicking '${selector}' records click`, () => {
@@ -826,88 +809,6 @@ suite('NewTabPageAppTest', () => {
       assertEquals(1, metrics.count('NewTabPage.Click'));
       assertEquals(
           1, metrics.count('NewTabPage.Click', NtpElement.ONE_GOOGLE_BAR));
-    });
-  });
-
-  function modulesCommonTests(modulesElementTag: string) {
-    test('modules loaded', async () => {
-      // Arrange.
-      loadTimeData.overrideValues({navigationStartTime: 0.0});
-      windowProxy.setResultFor('now', 123.0);
-      const modules = $$(app, modulesElementTag)!;
-      assertTrue(!!modules);
-
-      // Assert.
-      assertStyle(modules, 'display', 'none');
-
-      // Act.
-      modules.dispatchEvent(new CustomEvent('modules-loaded', {detail: 1}));
-      await microtasksFinished();
-
-      // Assert.
-      assertNotStyle(modules, 'display', 'none');
-      assertEquals(1, metrics.count('NewTabPage.Modules.ShownTime'));
-      assertEquals(1, metrics.count('NewTabPage.Modules.ShownTime', 123));
-    });
-  }
-
-  suite('V2Modules', () => {
-    suiteSetup(() => {
-      loadTimeData.overrideValues({
-        modulesEnabled: true,
-      });
-    });
-
-    test('container is hidden', () => {
-      const modules = $$(app, 'ntp-modules')!;
-      assertTrue(!!modules);
-      assertStyle(modules, 'display', 'none');
-    });
-
-    test('clicking records click', () => {
-      // Act.
-      $$<HTMLElement>(app, 'ntp-modules')!.click();
-
-      // Assert.
-      assertEquals(1, metrics.count('NewTabPage.Click'));
-      assertEquals(1, metrics.count('NewTabPage.Click', NtpElement.MODULE));
-    });
-
-    modulesCommonTests('ntp-modules');
-  });
-
-  suite('CounterfactualModules', () => {
-    suiteSetup(() => {
-      loadTimeData.overrideValues({
-        modulesEnabled: false,
-        modulesLoadEnabled: true,
-      });
-    });
-
-    test('modules loaded but not rendered if counterfactual', async () => {
-      // Act.
-      const fooElement = document.createElement('div');
-      const barElement = document.createElement('div');
-      moduleResolver.resolve([
-        {
-          descriptor:
-              new ModuleDescriptor('foo', () => Promise.resolve(fooElement)),
-          elements: [fooElement],
-        },
-        {
-          descriptor:
-              new ModuleDescriptor('bar', () => Promise.resolve(barElement)),
-          elements: [barElement],
-        },
-      ]);
-      await counterfactualLoad();
-      await microtasksFinished();
-
-      // Assert.
-      assertTrue(moduleRegistry.getCallCount('initializeModules') > 0);
-      assertEquals(1, handler.getCallCount('onModulesLoadedWithData'));
-      assertEquals(
-          0, app.shadowRoot.querySelectorAll('ntp-module-wrapper').length);
     });
   });
 
@@ -977,34 +878,6 @@ suite('NewTabPageAppTest', () => {
           .setCustomizeChromeSidePanelVisibility(false);
       await customizeButtonsCallbackRouterRemote.$.flushForTesting();
       assertEquals('false', getCustomizeButton().getAttribute('aria-pressed'));
-    });
-
-    suite('modules', () => {
-      suiteSetup(() => {
-        loadTimeData.overrideValues({
-          modulesEnabled: true,
-        });
-      });
-
-      test('modules can open side panel', () => {
-        // Act.
-        $$(app, '#modules')!.dispatchEvent(new Event('customize-module'));
-
-        // Assert.
-        assertDeepEquals(
-            [
-              true,
-              CustomizeChromeSection.kModules,
-              SidePanelOpenTrigger.kNewTabPage,
-            ],
-            customizeButtonsHandler.getArgs(
-                'setCustomizeChromeSidePanelVisible')[0]);
-        assertEquals(
-            1,
-            metrics.count(
-                'NewTabPage.CustomizeChromeOpened',
-                NtpCustomizeChromeEntryPoint.MODULE));
-      });
     });
 
     suite('customize URL', () => {
@@ -2738,34 +2611,9 @@ suite('NewTabPageAppTest', () => {
     });
   });
 
-  suite('MicrosoftAuth', () => {
-    [true, false].forEach(
-        (microsoftModuleEnabled) =>
-            suite(`microsoftModuleEnabled ${microsoftModuleEnabled}`, () => {
-              suiteSetup(() => {
-                loadTimeData.overrideValues({microsoftModuleEnabled});
-              });
-
-              test('Show iframe when appropriate', () => {
-                const iframe =
-                    $$<HTMLIFrameElement>(app, 'iframe#microsoftAuth');
-
-                if (!microsoftModuleEnabled) {
-                  assertFalse(!!iframe);
-                  return;
-                }
-
-                assertTrue(!!iframe);
-                assertEquals(
-                    'chrome-untrusted://ntp-microsoft-auth/', iframe.src);
-              });
-            }));
-  });
-
   suite('AutoRemovalToast', () => {
     suiteSetup(() => {
       loadTimeData.overrideValues({
-        modulesEnabled: true,
         shortcutsEnabled: true,
       });
     });
@@ -2786,40 +2634,40 @@ suite('NewTabPageAppTest', () => {
 
     test('displays single toast', async () => {
       // Arrange.
-      const modules = app.shadowRoot.querySelector('ntp-modules');
-      assertTrue(!!modules);
+      const mostVisited = app.shadowRoot.querySelector('cr-most-visited');
+      assertTrue(!!mostVisited);
 
       // Act.
-      modules.fire(
-          'modules-auto-removed', {message: 'Module removed', undo: () => {}});
+      mostVisited.fire(
+          'most-visited-auto-removed', {message: 'Shortcut removed', undo: () => {}});
       await microtasksFinished();
 
       // Assert.
       assertTrue(getUndoToast().open);
-      assertEquals('Module removed', getUndoToastMessage().textContent.trim());
+      assertEquals(
+        'Shortcut removed', getUndoToastMessage().textContent.trim());
     });
 
     test('queues multiple toasts', async () => {
       // Arrange.
-      const modules = app.shadowRoot.querySelector('ntp-modules');
-      assertTrue(!!modules);
       const mostVisited = app.shadowRoot.querySelector('cr-most-visited');
       assertTrue(!!mostVisited);
 
       // Act - dispatch the first toast.
-      modules.fire(
-          'modules-auto-removed', {message: 'Modules hidden', undo: () => {}});
-      await microtasksFinished();
-
-      // Act - dispatch the second toast.
       mostVisited.fire(
           'most-visited-auto-removed',
           {message: 'Shortcuts hidden', undo: () => {}});
       await microtasksFinished();
 
+      // Act - dispatch the second toast.
+      mostVisited.fire(
+          'most-visited-auto-removed',
+          {message: 'More shortcuts hidden', undo: () => {}});
+      await microtasksFinished();
+
       // Assert.
       assertTrue(getUndoToast().open);
-      assertEquals('Modules hidden', getUndoToastMessage().textContent.trim());
+      assertEquals('Shortcuts hidden', getUndoToastMessage().textContent.trim());
 
       // Act - clicking undo on the first toast.
       let undoButton = app.shadowRoot.querySelector<HTMLElement>('#undoButton');
@@ -2830,7 +2678,7 @@ suite('NewTabPageAppTest', () => {
       // Assert.
       assertTrue(getUndoToast().open);
       assertEquals(
-          'Shortcuts hidden', getUndoToastMessage().textContent.trim());
+          'More shortcuts hidden', getUndoToastMessage().textContent.trim());
 
       // Act - clicking undo on the second toast.
       undoButton = app.shadowRoot.querySelector<HTMLElement>('#undoButton');
@@ -2844,14 +2692,13 @@ suite('NewTabPageAppTest', () => {
 
     test('toast with null undo callback', async () => {
       // Arrange.
-      const modules = app.shadowRoot.querySelector('ntp-modules');
-      assertTrue(!!modules);
       const mostVisited = app.shadowRoot.querySelector('cr-most-visited');
       assertTrue(!!mostVisited);
 
       // Act - dispatch the first toast with null callback.
-      modules.fire(
-          'modules-auto-removed', {message: 'Module removed', undo: null});
+      mostVisited.fire(
+          'most-visited-auto-removed',
+          {message: 'Shortcuts removed', undo: null});
       await microtasksFinished();
 
       // Act - dispatch the second toast with non-null callback.
@@ -2862,7 +2709,8 @@ suite('NewTabPageAppTest', () => {
 
       // Assert.
       assertTrue(getUndoToast().open);
-      assertEquals('Module removed', getUndoToastMessage().textContent.trim());
+      assertEquals(
+        'Shortcuts removed', getUndoToastMessage().textContent.trim());
 
       // Act - clicking undo on the first toast does not crash.
       let undoButton = app.shadowRoot.querySelector<HTMLElement>('#undoButton');
@@ -3943,30 +3791,6 @@ suite('NewTabPageAppTest', () => {
       assertNear(
           rhsWrapper.getBoundingClientRect().width / 2,
           parseFloat(attributionStyle.maxWidth), LAYOUT_TOLERANCE_PX);
-    });
-
-    suite('Modules', () => {
-      suiteSetup(() => {
-        loadTimeData.overrideValues({modulesEnabled: true});
-      });
-
-      test('modules use the window width when feature disabled', async () => {
-        await setThreadsRailEnabled(false);
-        await setRhsWrapperWidth(700);
-
-        const modules = app.shadowRoot.querySelector('ntp-modules');
-        assertTrue(!!modules);
-        assertEquals(null, modules.containerWidth);
-      });
-
-      test('modules use the RHS width when feature enabled', async () => {
-        await setThreadsRailEnabled(true);
-        await setRhsWrapperWidth(700);
-
-        const modules = app.shadowRoot.querySelector('ntp-modules');
-        assertTrue(!!modules);
-        assertEquals(700, modules.containerWidth);
-      });
     });
   });
 
@@ -5665,8 +5489,6 @@ suite('NewTabPageAppReducedMotionTest', () => {
   let handler: TestMock<PageHandlerRemote>;
   let backgroundManager: TestMock<BackgroundManager>;
   let searchboxHandler: TestMock<SearchboxPageHandlerRemote>;
-  let moduleRegistry: TestMock<ModuleRegistry>;
-  let moduleResolver: PromiseResolver<Module[]>;
 
   const url: URL = new URL(location.href);
   const backgroundImageLoadTime: number = 123;
@@ -5674,21 +5496,21 @@ suite('NewTabPageAppReducedMotionTest', () => {
   function createSetup() {
     document.body.innerHTML = window.trustedTypes!.emptyHTML;
     windowProxy =
-        installMock(WindowProxy, (mock) => WindowProxy.setInstance(mock));
+      installMock(WindowProxy, (mock) => WindowProxy.setInstance(mock));
     windowProxy.setResultFor('waitForLazyRender', Promise.resolve());
     windowProxy.setResultFor('createIframeSrc', '');
     windowProxy.setResultFor('now', new Date());
     windowProxy.setResultFor('url', url);
     windowProxy.setResultFor('matchMedia', {
       matches: false,
-      addEventListener: () => {},
-      removeEventListener: () => {},
-      addListener: () => {},
-      removeListener: () => {},
+      addEventListener: () => { },
+      removeEventListener: () => { },
+      addListener: () => { },
+      removeListener: () => { },
     });
     handler = installMock(
-        PageHandlerRemote,
-        mock => NewTabPageProxy.setInstance(mock, new PageCallbackRouter()));
+      PageHandlerRemote,
+      mock => NewTabPageProxy.setInstance(mock, new PageCallbackRouter()));
     handler.setResultFor('getMostVisitedSettings', Promise.resolve({
       customLinksEnabled: false,
       shortcutsVisible: false,
@@ -5696,31 +5518,22 @@ suite('NewTabPageAppReducedMotionTest', () => {
     handler.setResultFor('getDoodle', Promise.resolve({
       doodle: null,
     }));
-    handler.setResultFor('getModulesIdNames', Promise.resolve({data: []}));
-    handler.setResultFor('getModulesEligibleForRemoval', Promise.resolve({
-      moduleIds: [],
-    }));
-    handler.setResultFor('getModulesOrder', Promise.resolve({moduleIds: []}));
     handler.setResultFor(
-        'canShowRealboxContextMenuAnimation', Promise.resolve({canShow: true}));
+      'canShowRealboxContextMenuAnimation', Promise.resolve({ canShow: true }));
     backgroundManager = installMock(
-        BackgroundManager, (mock) => BackgroundManager.setInstance(mock));
+      BackgroundManager, (mock) => BackgroundManager.setInstance(mock));
     backgroundManager.setResultFor(
-        'getBackgroundImageLoadTime', Promise.resolve(backgroundImageLoadTime));
-    moduleRegistry =
-        installMock(ModuleRegistry, (mock) => ModuleRegistry.setInstance(mock));
-    moduleResolver = new PromiseResolver();
-    moduleRegistry.setResultFor('initializeModules', moduleResolver.promise);
+      'getBackgroundImageLoadTime', Promise.resolve(backgroundImageLoadTime));
     installMock(
-        ComposeboxPageHandlerRemote,
-        mock => ComposeboxProxyImpl.setInstance(new ComposeboxProxyImpl(
-            mock, new SearchboxPageHandlerRemote(),
-            new SearchboxPageCallbackRouter())));
+      ComposeboxPageHandlerRemote,
+      mock => ComposeboxProxyImpl.setInstance(new ComposeboxProxyImpl(
+        mock, new SearchboxPageHandlerRemote(),
+        new SearchboxPageCallbackRouter())));
     searchboxHandler = installMock(SearchboxPageHandlerRemote, mock => {
       ComposeboxProxyImpl.getInstance().searchboxHandler = mock;
       SearchboxBrowserProxy.getInstance().handler = mock;
     });
-    searchboxHandler.setResultFor('getRecentTabs', Promise.resolve({tabs: []}));
+    searchboxHandler.setResultFor('getRecentTabs', Promise.resolve({ tabs: [] }));
     searchboxHandler.setResultFor('getInputState', Promise.resolve({
       state: {
         allowedModels: [],
@@ -5736,18 +5549,18 @@ suite('NewTabPageAppReducedMotionTest', () => {
       },
     }));
     searchboxHandler.setResultFor(
-        'getPageClassification',
-        Promise.resolve({metricSource: 'NTP_REALBOX'}));
+      'getPageClassification',
+      Promise.resolve({ metricSource: 'NTP_REALBOX' }));
     // TODO(crbug.com/570702014): Smart Tab Sharing is desktop-only.
     // <if expr="not is_android">
     searchboxHandler.setResultFor(
-        'getSmartTabSharingActive', Promise.resolve({active: false}));
+      'getSmartTabSharingActive', Promise.resolve({ active: false }));
     // </if>
     installMock(
-        ActionChipsHandlerRemote, mock => ActionChipsApiProxyImpl.setInstance({
-          getHandler: () => mock,
-          getCallbackRouter: () => new ActionChipsPageCallbackRouter(),
-        }));
+      ActionChipsHandlerRemote, mock => ActionChipsApiProxyImpl.setInstance({
+        getHandler: () => mock,
+        getCallbackRouter: () => new ActionChipsPageCallbackRouter(),
+      }));
   }
 
   async function createAndAppendApp() {
@@ -5759,7 +5572,7 @@ suite('NewTabPageAppReducedMotionTest', () => {
   function setReducedMotionPreference(reducedMotionPreferred: boolean) {
     if (reducedMotionPreferred) {
       document.documentElement.style.setProperty(
-          '--cr-animations-disabled', '1');
+        '--cr-animations-disabled', '1');
     } else {
       document.documentElement.style.removeProperty('--cr-animations-disabled');
     }
@@ -5767,82 +5580,52 @@ suite('NewTabPageAppReducedMotionTest', () => {
 
   suite('Initialization', () => {
     test(
-        'initializes as SPINNER_ONLY when reduced motion is not preferred',
-        async () => {
-          createSetup();
-          setReducedMotionPreference(false);
-          await createAndAppendApp();
-          app.dispatchEvent(new CustomEvent(
-              'action-chips-retrieval-state-changed',
-              {detail: {state: ActionChipsRetrievalState.REQUESTED}}));
-          await microtasksFinished();
+      'initializes as SPINNER_ONLY when reduced motion is not preferred',
+      async () => {
+        createSetup();
+        setReducedMotionPreference(false);
+        await createAndAppendApp();
+        app.dispatchEvent(new CustomEvent(
+          'action-chips-retrieval-state-changed',
+          { detail: { state: ActionChipsRetrievalState.REQUESTED } }));
+        await microtasksFinished();
 
-          assertEquals(
-              GlifAnimationState.SPINNER_ONLY,
-              app.$.searchbox.contextMenuGlifAnimationState);
-        });
+        assertEquals(
+          GlifAnimationState.SPINNER_ONLY,
+          app.$.searchbox.contextMenuGlifAnimationState);
+      });
   });
 
   suite('ReducedMotionScrim', () => {
     setup(createSetup);
 
     test(
-        'scrim transition is none when reduced motion is preferred',
-        async () => {
-          setReducedMotionPreference(true);
-          await createAndAppendApp();
-          app.$.searchbox.dispatchEvent(new CustomEvent('open-composebox', {
-            detail: {text: '', files: []},
-          }));
-          await microtasksFinished();
+      'scrim transition is none when reduced motion is preferred',
+      async () => {
+        setReducedMotionPreference(true);
+        await createAndAppendApp();
+        app.$.searchbox.dispatchEvent(new CustomEvent('open-composebox', {
+          detail: { text: '', files: [] },
+        }));
+        await microtasksFinished();
 
-          const scrim = app.shadowRoot.querySelector('#scrim')!;
-          assertStyle(scrim, 'transition-property', 'none');
-        });
+        const scrim = app.shadowRoot.querySelector('#scrim')!;
+        assertStyle(scrim, 'transition-property', 'none');
+      });
 
     test(
-        'scrim transition is not none when reduced motion is not preferred',
-        async () => {
-          setReducedMotionPreference(false);
-          await createAndAppendApp();
-          app.$.searchbox.dispatchEvent(new CustomEvent('open-composebox', {
-            detail: {text: '', files: []},
-          }));
-          await microtasksFinished();
+      'scrim transition is not none when reduced motion is not preferred',
+      async () => {
+        setReducedMotionPreference(false);
+        await createAndAppendApp();
+        app.$.searchbox.dispatchEvent(new CustomEvent('open-composebox', {
+          detail: { text: '', files: [] },
+        }));
+        await microtasksFinished();
 
-          const scrim = app.shadowRoot.querySelector('#scrim')!;
-          assertNotStyle(scrim, 'transition-property', 'none');
-        });
-  });
-
-  suite('ReducedMotionModules', () => {
-    setup(() => {
-      loadTimeData.overrideValues({
-        modulesEnabled: true,
+        const scrim = app.shadowRoot.querySelector('#scrim')!;
+        assertNotStyle(scrim, 'transition-property', 'none');
       });
-      createSetup();
-    });
-
-    [false, true].forEach(preferred => {
-      test(
-          `modules animation is ${
-              preferred ? '' : 'not '}none when reduced motion is ${
-              preferred ? '' : 'not '}preferred`,
-          async () => {
-            setReducedMotionPreference(preferred);
-            await createAndAppendApp();
-
-            const modules = app.shadowRoot.querySelector('ntp-modules')!;
-            modules.dispatchEvent(
-                new CustomEvent('modules-loaded', {detail: 1}));
-            await microtasksFinished();
-
-            const assertion_fn = preferred ? assertStyle : assertNotStyle;
-            assertion_fn(
-                app.shadowRoot.querySelector('#modules')!, 'animation-name',
-                'none');
-          });
-    });
   });
 });
 
@@ -5876,24 +5659,10 @@ suite('NewTabPageAppContextMenuAnimationTest', () => {
     handler.setResultFor('getDoodle', Promise.resolve({
       doodle: null,
     }));
-    handler.setResultFor('getModulesIdNames', Promise.resolve({data: []}));
-    handler.setResultFor('getModulesEligibleForRemoval', Promise.resolve({
-      moduleIds: [],
-    }));
-    handler.setResultFor('getModulesOrder', Promise.resolve({moduleIds: []}));
     handler.setResultFor(
         'canShowRealboxContextMenuAnimation', Promise.resolve({canShow: true}));
     installMock(
         BackgroundManager, (mock) => BackgroundManager.setInstance(mock));
-    const moduleRegistry =
-        installMock(ModuleRegistry, (mock) => ModuleRegistry.setInstance(mock));
-    moduleRegistry.setResultFor(
-        'initializeModules', new PromiseResolver().promise);
-    installMock(
-        ComposeboxPageHandlerRemote,
-        mock => ComposeboxProxyImpl.setInstance(new ComposeboxProxyImpl(
-            mock, new SearchboxPageHandlerRemote(),
-            new SearchboxPageCallbackRouter())));
     const searchboxHandler = installMock(SearchboxPageHandlerRemote, mock => {
       ComposeboxProxyImpl.getInstance().searchboxHandler = mock;
       SearchboxBrowserProxy.getInstance().handler = mock;
