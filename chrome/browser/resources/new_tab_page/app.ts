@@ -50,7 +50,6 @@ import {CustomizeDialogPage} from './customize_dialog_types.js';
 import type {IframeElement} from './iframe.js';
 import type {LogoElement} from './logo.js';
 import {recordBoolean, recordDuration, recordEnumeration, recordLinearValue, recordLoadDuration, recordSparseValueWithPersistentHash} from './metrics_utils.js';
-import {ParentTrustedDocumentProxy} from './modules/microsoft_auth_frame_connector.js';
 import type {PageCallbackRouter, PageHandlerRemote, Theme} from './new_tab_page.mojom-webui.js';
 import {NtpBackgroundImageSource} from './new_tab_page.mojom-webui.js';
 import {NewTabPageProxy} from './new_tab_page_proxy.js';
@@ -60,12 +59,6 @@ import type {NtpSearchboxElement} from './ntp_searchbox.js';
 import {$$} from './utils.js';
 import {Action as VoiceAction, recordVoiceAction} from './voice_search_overlay.js';
 import {WindowProxy} from './window_proxy.js';
-
-enum ModuleLoadStatus {
-  MODULE_LOAD_IN_PROGRESS = 0,
-  MODULE_LOAD_NOT_ATTEMPTED = 1,
-  MODULE_LOAD_COMPLETE = 2,
-}
 
 interface ExecutePromoBrowserCommandData {
   commandId: Command;
@@ -127,7 +120,6 @@ enum NtpWallpaperSearchButtonHideCondition {
 
 const CUSTOMIZE_URL_PARAM: string = 'customize';
 const OGB_IFRAME_ORIGIN = 'chrome-untrusted://new-tab-page';
-const MSAL_IFRAME_ORIGIN = 'chrome-untrusted://ntp-microsoft-auth';
 const VOICE_QUERY_LENGTH_LIMIT = 120;
 const VOICE_AUTO_SUBMIT_IDLE_TIMEOUT_MS = 3000;
 const VOICE_MANUAL_SUBMIT_IDLE_TIMEOUT_MS = 10000;
@@ -283,31 +275,16 @@ export class AppElement extends AppElementBase {
       oneGoogleBarEnabled_: {type: Boolean},
       shortcutsEnabled_: {type: Boolean},
       shortcutsReorderEnabled_: {type: Boolean},
-      modulesEnabled_: {type: Boolean},
 
       browserPromoType_: {type: String},
       browserPromoLimit_: {type: Number},
       browserPromoCompletedLimit_: {type: Number},
-      showBrowserPromo_: {type: Boolean},
       caretAnimationsEnabled_: {type: Boolean},
       usePecApi_: {type: Boolean},
       smartTabSharingVisible_: {type: Boolean},
       contextManagementInComposeboxEnabled_: {type: Boolean},
 
-      modulesShownToUser: {
-        type: Boolean,
-        reflect: true,
-      },
-
-      microsoftModuleEnabled_: {type: Boolean},
-      microsoftAuthIframePath_: {type: String},
-
       multiLineEnabled_: {type: Boolean},
-
-      /**
-       * Modules are hidden until loaded.
-       */
-      modulesLoaded_: {type: Boolean},
 
       /**
        * If true, renders additional elements that were not deemed crucial to
@@ -363,10 +340,6 @@ export class AppElement extends AppElementBase {
       // =======================================================================
 
       selectedCustomizeDialogPage_: {type: String},
-      modulesLoadedStatus_: {
-        type: Number,
-        reflect: true,
-      },
 
       energyEffectEnabled_: {type: Boolean, reflect: true},
       energyEffectAnimationEnabled_: {type: Boolean, reflect: true},
@@ -443,22 +416,14 @@ export class AppElement extends AppElementBase {
       loadTimeData.getBoolean('shortcutsEnabled');
   protected accessor shortcutsReorderEnabled_: boolean =
       loadTimeData.getBoolean('ntpShortcutsReorderEnabled');
-  protected accessor modulesEnabled_: boolean =
-      loadTimeData.getBoolean('modulesEnabled');
   protected accessor browserPromoType_: string =
       loadTimeData.getString('browserPromoType');
   protected accessor browserPromoLimit_: number =
       loadTimeData.getInteger('browserPromoLimit');
   protected accessor browserPromoCompletedLimit_: number =
       loadTimeData.getInteger('browserPromoCompletedLimit');
-  protected accessor showBrowserPromo_: boolean = false;
-  protected accessor modulesShownToUser: boolean = false;
-  protected accessor microsoftModuleEnabled_: boolean =
-      loadTimeData.getBoolean('microsoftModuleEnabled');
-  protected accessor microsoftAuthIframePath_: string = MSAL_IFRAME_ORIGIN;
   protected accessor multiLineEnabled_: boolean =
       loadTimeData.getBoolean('multiLineEnabled');
-  protected accessor modulesLoaded_: boolean = false;
   protected accessor lazyRender_: boolean = false;
   protected accessor scrolledToTop_: boolean = true;
   protected accessor wallpaperSearchButtonAnimationEnabled_: boolean =
@@ -507,15 +472,12 @@ export class AppElement extends AppElementBase {
 
   private voiceSearchActivatedByKeyboard_: boolean = false;
   private accessor selectedCustomizeDialogPage_: string|null = null;
-  private accessor modulesLoadedStatus_: ModuleLoadStatus =
-      ModuleLoadStatus.MODULE_LOAD_IN_PROGRESS;
   private callbackRouter_: PageCallbackRouter;
   private pageHandler_: PageHandlerRemote;
   private customizeButtonsCallbackRouter_:
       CustomizeButtonsDocumentCallbackRouter;
   private customizeButtonsHandler_: CustomizeButtonsHandlerRemote;
   private backgroundManager_: BackgroundManager;
-  private connectMicrosoftAuthToParentDocumentListenerId_: number|null = null;
   private setThemeListenerId_: number|null = null;
   private setCustomizeChromeSidePanelVisibilityListener_: number|null = null;
   private setWallpaperSearchButtonVisibilityListener_: number|null = null;
@@ -593,14 +555,6 @@ export class AppElement extends AppElementBase {
     } else if (this.hasUpdated) {
       this.observeRhsWrapperWidth_();
     }
-
-    // Listen for chrome-untrusted://ntp-microsoft-auth iframe trying to
-    // connect to the NTP.
-    this.connectMicrosoftAuthToParentDocumentListenerId_ =
-        this.callbackRouter_.connectToParentDocument.addListener(
-            childDocumentRemote => {
-              ParentTrustedDocumentProxy.setInstance(childDocumentRemote);
-            });
 
     this.setThemeListenerId_ =
         this.callbackRouter_.setTheme.addListener(theme => {
@@ -712,8 +666,6 @@ export class AppElement extends AppElementBase {
         'change', this.onRealboxCanShowSecondarySideChanged_);
     this.rhsWrapperResizeObserver_?.disconnect();
 
-    this.callbackRouter_.removeListener(
-        this.connectMicrosoftAuthToParentDocumentListenerId_!);
     this.callbackRouter_.removeListener(this.setThemeListenerId_!);
     this.callbackRouter_.removeListener(this.showWebstoreToastListenerId_!);
     this.callbackRouter_.removeListener(
@@ -748,23 +700,11 @@ export class AppElement extends AppElementBase {
     // theme_, showLensUploadDialog_
     this.realboxShown_ = this.computeRealboxShown_();
 
-    // modulesLoadedStatus_
-    this.modulesLoaded_ = this.computeModulesLoaded_();
-
     // wallpaperSearchButtonEnabled_, showBackgroundImage_, backgroundColor_
     this.showWallpaperSearchButton_ = this.computeShowWallpaperSearchButton_();
 
     // showWallpaperSearchButton_, showBackgroundImage_
     this.showCustomizeChromeText_ = this.computeShowCustomizeChromeText_();
-
-    // modulesEnabled_, modulesShownToUser, modulesLoadedStatus_
-    this.showBrowserPromo_ = this.computeShowBrowserPromo_();
-
-    if ((changedPrivateProperties.has('modulesLoadedStatus_') &&
-         this.modulesLoadedStatus_ !==
-             ModuleLoadStatus.MODULE_LOAD_IN_PROGRESS)) {
-      this.recordBrowserPromoMetrics_();
-    }
 
     if (changedPrivateProperties.has('showVoiceSearchOverlay_')) {
       this.showVoiceSearchScrim_ =
@@ -815,9 +755,7 @@ export class AppElement extends AppElementBase {
     this.printPerformance_();
     performance.measure('app-creation', 'app-creation-start');
 
-    if (!this.modulesEnabled_) {
       this.recordBrowserPromoMetrics_();
-    }
 
     if (this.ntpRealboxNextEnabled_) {
       this.registerHelpBubble(
@@ -856,10 +794,6 @@ export class AppElement extends AppElementBase {
 
     if (changedPrivateProperties.has('showBackgroundImage_')) {
       this.onShowBackgroundImageChange_();
-    }
-
-    if (changedPrivateProperties.has('modulesLoaded_')) {
-      this.onModulesLoadedChange_();
     }
 
     if (changedPrivateProperties.has('showComposebox_')) {
@@ -946,11 +880,6 @@ export class AppElement extends AppElementBase {
     // Do not show the realbox if the upload dialog is showing.
     return !!this.theme_ && !this.showLensUploadDialog_ &&
         !this.showComposebox_;
-  }
-
-  private computeModulesLoaded_(): boolean {
-    return !loadTimeData.getBoolean('modulesEnabled') ||
-        this.modulesLoadedStatus_ === ModuleLoadStatus.MODULE_LOAD_COMPLETE;
   }
 
   private onRealboxCanShowSecondarySideChanged_ = (e: MediaQueryListEvent) => {
@@ -1395,14 +1324,6 @@ export class AppElement extends AppElementBase {
     }
   }
 
-  private onModulesLoadedChange_() {
-    if (this.modulesLoaded_ &&
-        loadTimeData.getBoolean('modulesEnabled')) {
-      recordLoadDuration(
-          'NewTabPage.Modules.ShownTime', WindowProxy.getInstance().now());
-    }
-  }
-
   /**
    * Set the #backgroundImage |path| only when different and non-empty. Reset
    * the customize dialog background selection if the dialog is closed.
@@ -1542,24 +1463,7 @@ export class AppElement extends AppElementBase {
     }
   }
 
-  protected onModulesLoaded_(e: CustomEvent<number|null>) {
-    this.modulesLoadedStatus_ = e.detail ?
-        ModuleLoadStatus.MODULE_LOAD_COMPLETE :
-        ModuleLoadStatus.MODULE_LOAD_NOT_ATTEMPTED;
-  }
-
-  protected computeShowBrowserPromo_(): boolean {
-    return !this.modulesEnabled_ ||
-        (this.modulesLoadedStatus_ !==
-             ModuleLoadStatus.MODULE_LOAD_IN_PROGRESS &&
-         !this.modulesShownToUser);
-  }
-
   protected recordBrowserPromoMetrics_() {
-    if (!this.showBrowserPromo_) {
-      recordShowBrowserPromosResult(ShowNtpPromosResult.kNotShownDueToPolicy);
-      return;
-    }
 
     switch (this.browserPromoType_) {
       case 'disabled':
@@ -1576,13 +1480,6 @@ export class AppElement extends AppElementBase {
     }
   }
 
-  protected onCustomizeModule_() {
-    this.showCustomize_ = true;
-    this.selectedCustomizeDialogPage_ = CustomizeDialogPage.MODULES;
-    recordCustomizeChromeOpen(NtpCustomizeChromeEntryPoint.MODULE);
-    this.setCustomizeChromeSidePanelVisible_(this.showCustomize_);
-  }
-
   private setCustomizeChromeSidePanelVisible_(visible: boolean) {
     let section: CustomizeChromeSection = CustomizeChromeSection.kUnspecified;
     switch (this.selectedCustomizeDialogPage_) {
@@ -1592,9 +1489,6 @@ export class AppElement extends AppElementBase {
         break;
       case CustomizeDialogPage.SHORTCUTS:
         section = CustomizeChromeSection.kShortcuts;
-        break;
-      case CustomizeDialogPage.MODULES:
-        section = CustomizeChromeSection.kModules;
         break;
       case CustomizeDialogPage.WALLPAPER_SEARCH:
         section = CustomizeChromeSection.kWallpaperSearch;
@@ -1680,9 +1574,6 @@ export class AppElement extends AppElementBase {
         case $$(this, 'cr-most-visited'):
           recordClick(NtpElement.MOST_VISITED);
           return;
-        case $$(this, '#modules'):
-          recordClick(NtpElement.MODULE);
-          return;
         case $$(this, 'cr-left-hand-side'):
           recordClick(NtpElement.THREADS_RAIL);
           return;
@@ -1740,10 +1631,6 @@ export class AppElement extends AppElementBase {
           this.shadowRoot.getElementById('searchboxContainer')!.matches(
               ':focus-within');
     }
-  }
-
-  protected onModulesShownToUserChanged_(e: CustomEvent<{value: boolean}>) {
-    this.modulesShownToUser = e.detail.value;
   }
 
   private async initializeContextMenuAnimationState_() {
@@ -1820,11 +1707,6 @@ export class AppElement extends AppElementBase {
    *                           the undo callback function.
    */
   protected onMostVisitedAutoRemoved_(
-      undoToastContext: CustomEvent<{message: string, undo: () => void}>) {
-    this.showUndoToast_(undoToastContext);
-  }
-
-  protected onModulesAutoRemoved_(
       undoToastContext: CustomEvent<{message: string, undo: () => void}>) {
     this.showUndoToast_(undoToastContext);
   }
