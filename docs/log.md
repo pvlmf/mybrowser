@@ -82,3 +82,4 @@
   - 学び: `chrome` ビルドだけでは WebUI テストの TypeScript は検証されない。テスト変更時は `...:build_ts` も実行する
   - 学び: `app.html` から要素を外すだけなら `app.ts` は未使用コードとして残せる。ただし `app.ts` 内の `$$(this, '#modules')` は null を返すだけで安全
   - 新規プロファイルではショートカットが「ウェブストア」になる。初回起動時は `chrome://intro/welcome` が出るが、`--no-first-run` で回避でき、今回の変更とは無関係
+  - コミット: `3a094f68ce`
