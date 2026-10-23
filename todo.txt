@@ -6,15 +6,26 @@
 
 ## 進行中
 
-- [ ] NTP モジュール削除 Phase 1 を完了する
+- [ ] NTP モジュール削除 Phase 1b（WebUI 側の撤去）
   - 計画: `docs/notes/2026-10-22-modules-removal-plan.md`
   - 完了: Phase 1a-1（モジュール DOM 削除）、Phase 1a-2（`app.ts` のモジュールロジック削除）、Phase 1a-3（残存参照の静的棚卸し）
-  - 棚卸し結果: `app.html` と `app_test.ts` にモジュール専用参照は見つからない。`CustomizeDialogPage.MODULES` はフッター側が使うため保持する
-  - 次（Phase 1b）: WebUI モジュール資産・依存・テストを一括して削除する。対象は `lazy_load.ts`、`new_tab_page.gni`、`BUILD.gn`、`new_tab_page.ts` のモジュール Mojo export、テスト側 `BUILD.gn`、`new_tab_page_browsertest.cc` のモジュール suite、`chrome/browser/resources/new_tab_page/modules/`、`chrome/test/data/webui/new_tab_page/modules/`
-  - ブラウザテストでは `NewTabPageModulesTest` 一式と Most Relevant Tab Resumption 専用テストに加え、対応する TS suite が既に存在しない `V2Modules` / `CounterfactualModules` / `MicrosoftAuth` の古い登録も削除対象として確認する
+  - 現状（2026-10-23 17:40 実測）:
+    - ローカル `dev` はクリーン。HEAD は `e7978632cc`（GitHub の `dev` と同じ）
+    - 製品 TS `chrome/browser/resources/new_tab_page:build_ts` は成功
+    - テスト TS `chrome/test/data/webui/new_tab_page:build_ts` は失敗（66 errors / 24 files）
+    - 原因: `cd41dcc` がモジュールテストをビルドに残したまま `lazy_load.ts` の export を削除し、Composebox / Lens / Voice search の export も巻き込んだ
+  - Step 1（次にやる）: テスト側をモジュールから切り離し、通常機能の export を復元する
+    - `lazy_load.ts` を `cd41dcc` の直前の状態に戻す（モジュール export は Step 2 で削除する）
+    - テスト `BUILD.gn` から `modules_test_files` を外す
+    - `app_focus_test.ts` のモジュール import / mock を削除する
+    - `new_tab_page_browsertest.cc` のモジュール suite と、TS 側に存在しない `V2Modules` / `CounterfactualModules` / `MicrosoftAuth` 登録を削除する
+    - `chrome/test/data/webui/new_tab_page/modules/` を削除する
+  - Step 2: 製品 WebUI からモジュール資産を削除する
+    - `lazy_load.ts` のモジュール export、`new_tab_page.gni`、`resources/new_tab_page/BUILD.gn`、`new_tab_page.ts` のモジュール Mojo export を整理する
+    - `chrome/browser/resources/new_tab_page/modules/` を削除する
+  - 完了条件: 両方の `build_ts`、`chrome/test/data/webui/new_tab_page:build`、フルビルド、実ブラウザで検索・ショートカット・ラベル・カスタマイズが維持されることを確認する
   - 維持: C++ バックエンド、`chrome/browser/ui/webui/new_tab_page/`、`chrome/browser/resources/new_tab_page/untrusted/`、`CustomizeDialogPage.MODULES`、enum の履歴値
-  - 完了条件: WebUI 側にモジュール参照が残っていないことを検索で確認し、両方の `build_ts`、フルビルド、実ブラウザで検索・ショートカット・ラベル・カスタマイズが維持されることを確認する
-  - 注意: ローカル環境が古いコミットのままなら、作業前に `origin/dev` の進行管理コミットへ fast-forward する。作業ツリーに変更がある場合は先に差分を確認する
+  - 注意: このクローンは fetch refspec が `main` のみで、ローカルに `origin/dev` 追跡ブランチがない。`git fetch origin dev` を使う
 
 ## 次回の候補
 

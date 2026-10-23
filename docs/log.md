@@ -109,3 +109,19 @@
   - 学び: `showBrowserPromo_` は「モジュールが読み込み中か」を考慮するためだけの値だった。モジュールを消したので、テンプレートは `browserPromoType_` だけで判定できる
   - 学び: enum の値を消すと `enums.xml` の履歴とずれる。未使用になっても、記録済みの値は残す
   - 次の作業: Phase 1a-3/1b（`modules/` の WebUI リソース、`lazy_load.ts`、GN の参照削除）
+
+## 2026-10-23
+
+- 引き継ぎ時点の実測（コード変更なし）
+  - `git status -sb`: `## dev`（クリーン）
+  - `git log -1 --oneline`: `e7978632cc docs: link local agent handoff from todo`
+  - `git ls-remote origin refs/heads/dev`: `e7978632cc43cf48efa117802e1e4f744c13f285`（ローカルと同じ）
+  - `PATH="$HOME/depot_tools:$PATH" autoninja -C out/Release -j 6 chrome/browser/resources/new_tab_page:build_ts`: 成功（no work to do）
+  - `PATH="$HOME/depot_tools:$PATH" autoninja -C out/Release -j 6 chrome/test/data/webui/new_tab_page:build_ts`: 失敗（66 errors / 24 files）
+    - モジュール系 13 ファイル: `modules/authentication`、`modules/calendar`、`modules/file_suggestion`、`module_descriptor`、`module_header`、`module_registry`、`module_wrapper`、`modules_test`、`most_relevant_tab_resumption`
+    - モジュール以外 11 ファイル: `app_focus_test.ts`、`app_test.ts`、composebox 6、lens 2、voice_search 1
+    - 主なエラー: `TS2305`（`chrome://new-tab-page/lazy_load.js` に export がない）、`TS7006`（calendar テストの暗黙 `any`）
+    - 原因: `cd41dcc` がモジュールテストをビルドに残したまま `lazy_load.ts` の export を削除し、Composebox / Lens / Voice search の export も一緒に消した
+  - `./scripts/build-chrome.sh`: この日は未実行。最後の `chrome` ビルドは 13:52 に成功しているが、`cd41dcc` のコミット後の検証記録はない
+  - 実ブラウザ確認: この日は未実施
+  - 次の作業: `todo.txt` の Phase 1b Step 1（テスト側の切り離しと通常 export の復元）から
