@@ -2,6 +2,8 @@
 
 方針・環境・ログは docs/ に分離。ここは「いま何をするか」だけを書く。
 
+今回のローカルエージェントへの引き継ぎ: [docs/handoff-2026-10-23.md](docs/handoff-2026-10-23.md)
+
 ## 進行中
 
 - [ ] NTP モジュール削除 Phase 1 を完了する
@@ -12,7 +14,7 @@
   - ブラウザテストでは `NewTabPageModulesTest` 一式と Most Relevant Tab Resumption 専用テストに加え、対応する TS suite が既に存在しない `V2Modules` / `CounterfactualModules` / `MicrosoftAuth` の古い登録も削除対象として確認する
   - 維持: C++ バックエンド、`chrome/browser/ui/webui/new_tab_page/`、`chrome/browser/resources/new_tab_page/untrusted/`、`CustomizeDialogPage.MODULES`、enum の履歴値
   - 完了条件: WebUI 側にモジュール参照が残っていないことを検索で確認し、両方の `build_ts`、フルビルド、実ブラウザで検索・ショートカット・ラベル・カスタマイズが維持されることを確認する
-  - 注意: ローカル環境が引き継ぎメモ記載の `bc948b5d19` のままなら、作業前に `origin/dev` の進行管理コミットへ fast-forward する。作業ツリーに変更がある場合は先に差分を確認する
+  - 注意: ローカル環境が古いコミットのままなら、作業前に `origin/dev` の進行管理コミットへ fast-forward する。作業ツリーに変更がある場合は先に差分を確認する
 
 ## 次回の候補
 
