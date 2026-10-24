@@ -241,3 +241,6 @@
 
 
 - 追加チェックで `chrome/browser/ui/webui/web_ui_all_urls_browser_test.cc` に残っていた `features::kAiOverlayDialog` の enable block を削除。削除済み feature declaration のテスト側参照を除去
+
+
+- 追加の参照チェックで `chrome/test/data/webui/ai_overlay_dialog/` の専用 browser test・Mocha test 3件・BUILD / AGENTS 資産6ファイルと、`chrome/test/data/webui/BUILD.gn` の source / GRDP 登録を発見して削除。専用 Overlay / TTC UI / テスト資産は計78ファイル削除（それとは別に `resources/internal` gitlink も削除）

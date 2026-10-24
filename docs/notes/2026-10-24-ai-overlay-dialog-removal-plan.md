@@ -103,7 +103,7 @@ gn refs out/Release //chrome/browser/ttc/resources
 
 - ブランチ: [`agent/remove-ai-overlay-dialog`](https://github.com/pvlmf/mybrowser/tree/agent/remove-ai-overlay-dialog)
 - Overlay 専用の Action / Controller / WebUI / Mojo / Android bridge、feature / pref / URL / test switch、GN 参照を削除する変更案を作成した
-- 専用の Controller 9 ファイル、WebUI / Mojo / tools / tests 30 ファイル、Android bridge 4 ファイル、toolbar button 2 ファイル、TTC UI / Notes 資産 27 ファイル、計 72 ファイルを削除し、残っていた `chrome/browser/ttc/resources/internal` gitlink も削除した
+- 専用の Controller 9 ファイル、WebUI / Mojo / tools / tests 30 ファイル、Android bridge 4 ファイル、toolbar button 2 ファイル、TTC UI / Notes 資産 27 ファイルと WebUI test 資産6ファイルを含む計 78 ファイルを削除し、残っていた `chrome/browser/ttc/resources/internal` gitlink も削除した
 - 追加で `ContentsContainerView` の埋め込み WebView、Element Identifier、frame GN dependency、browser / unit test aggregate、`webui_urls_for_test.cc` の URL 例外登録、`web_ui_all_urls_browser_test.cc` の feature enable block の残存参照を削除
 - 関連する主要 BUILD.gn では、TTC resources の consumer は削除した Overlay WebUI 以外に見つからなかった。ただしローカル `gn refs` は未実施のため、GN generation で確認する
 - この段階のコミットは候補ブランチ上のレビュー・ビルド用。ローカル検証前に `dev` へマージしない
