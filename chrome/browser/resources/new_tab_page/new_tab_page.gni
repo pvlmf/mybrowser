@@ -4,7 +4,6 @@
 
 import("//ui/webui/webui_features.gni")
 import("./action_chips/action_chips.gni")
-import("./modules/modules.gni")
 import("./ntp_promo/ntp_promo.gni")
 
 # List of files that don't need to be passed to html_to_wrapper().
@@ -30,7 +29,7 @@ all_ts_files = [
                  "transparency.ts",
                  "utils.ts",
                  "window_proxy.ts",
-               ] + modules_ts_files + ntp_promo_ts_files + action_chips_ts_files
+               ] + ntp_promo_ts_files + action_chips_ts_files
 
 # Files holding a Lit element definition and have an equivalent .html file.
 all_web_component_files = [
@@ -41,7 +40,7 @@ all_web_component_files = [
                             "lens_upload_dialog.ts",
                             "logo.ts",
                             "voice_search_overlay.ts",
-                          ] + modules_web_component_files
+                          ]
 
 all_css_files =
     [
@@ -55,4 +54,4 @@ all_css_files =
       "ntp_composebox.css",
       "ntp_searchbox.css",
       "voice_search_overlay.css",
-    ] + modules_css_files + ntp_promo_css_files + action_chips_css_files
+    ] + ntp_promo_css_files + action_chips_css_files

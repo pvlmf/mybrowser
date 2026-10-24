@@ -151,3 +151,26 @@
   - 学び: NTP のショートカットとカスタマイズボタンは `lazyRender_` が true になった後に描画される。CDP 確認では shadow root の存在だけでなく、対象要素の出現まで待つ
   - 学び: `chrome` バイナリのタイムスタンプが古くても、WebUI リソースは `resources.pak` 経由で更新されることがある
   - 学び: テスト C++ のビルドターゲットは `chrome/test/data/webui/new_tab_page:build` ではなく `chrome/test/data/webui:browser_tests`
+
+- NTP モジュール削除 Phase 1b Step 2: 製品 WebUI からモジュール資産を削除
+  - `lazy_load.ts` からモジュールの import / export を削除
+  - `new_tab_page.gni` から `modules.gni` の import と `modules_ts_files` / `modules_web_component_files` / `modules_css_files` を削除
+  - `resources/new_tab_page/BUILD.gn` からモジュールのアイコン、grdp、Mojo の依存を削除
+  - `new_tab_page.ts` からモジュール用の Mojo export を削除
+  - `chrome/browser/resources/new_tab_page/modules/`（77 ファイル）を削除
+  - 未使用になっていた `test_support.ts` の `initNullModule()` を削除
+  - 注意: `ntp_microsoft_auth_shared_ui` の Mojo 依存は残した。`new_tab_page.mojom-webui.ts` が同ファイルを import しており、削除すると `TS6307` で製品 TS が失敗する
+  - 確認: `PATH="$HOME/depot_tools:$PATH" autoninja -C out/Release -j 6 chrome/browser/resources/new_tab_page:build_ts` 成功
+  - 確認: `PATH="$HOME/depot_tools:$PATH" autoninja -C out/Release -j 6 chrome/test/data/webui/new_tab_page:build_ts` 成功（TS エラー 0）
+  - 確認: `PATH="$HOME/depot_tools:$PATH" autoninja -C out/Release -j 6 chrome/test/data/webui:browser_tests` 成功
+  - 確認: `./scripts/build-chrome.sh` 成功（15:25:50、`chrome` も再リンク）
+  - 確認: 新規プロファイル + `--headless=new` + CDP で `chrome://new-tab-page/` の `ntp-app.shadowRoot` を検査
+    - `cr-most-visited`: あり
+    - `ntp-customize-buttons`: あり
+    - `ntp-searchbox`: あり
+    - `#mybrowserLabel`: `thisismybrowser`
+    - `#modules` / `ntp-modules` / `iframe#microsoftAuth`: なし
+    - モジュール関連プロパティ: なし
+    - console error: なし
+  - 学び: モジュール用に見える Mojo 依存でも、`new_tab_page.mojom-webui.ts` から推移的に import されているものは残す必要がある。削除前に生成 TS の import を確認する
+  - 学び: `new_tab_page.ts` はテスト向けの再 export ファイルなので、モジュールテストを消すとモジュール用 Mojo export も安全に消せる

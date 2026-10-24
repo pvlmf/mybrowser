@@ -124,10 +124,6 @@ export function createFuseboxAction(overrides: Partial<FuseboxAction> = {}):
   };
 }
 
-export function initNullModule(): Promise<null> {
-  return Promise.resolve(null);
-}
-
 export function createElement(): HTMLElement {
   return document.createElement('div');
 }

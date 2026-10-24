@@ -38,21 +38,6 @@ export {ActionChipsApiProxyImpl} from './action_chips/action_chips_proxy.js';
 export {IframeElement} from './iframe.js';
 export {LensErrorType, LensFormElement, LensSubmitType} from './lens_form.js';
 export {LensUploadDialogAction, LensUploadDialogElement, LensUploadDialogError} from './lens_upload_dialog.js';
-// <if expr="not is_official_build">
-export {FooProxy} from './modules/dummy/foo_proxy.js';
-export {dummyV2Descriptor, ModuleElement as DummyModuleElement} from './modules/dummy/module.js';
-// </if>
-export {FileProxy} from './modules/file_suggestion/file_module_proxy.js';
-export {FileAction, FileSuggestionElement} from './modules/file_suggestion/file_suggestion.js';
-export {InfoDialogElement} from './modules/info_dialog.js';
-export {ParentTrustedDocumentProxy} from './modules/microsoft_auth_frame_connector.js';
-export {counterfactualLoad} from './modules/module_descriptors.js';
-export {ModulesElement, SUPPORTED_MODULE_WIDTHS} from './modules/modules.js';
-export {mostRelevantTabResumptionDescriptor, MostRelevantTabResumptionModuleElement} from './modules/most_relevant_tab_resumption/module.js';
-export {MostRelevantTabResumptionProxyImpl} from './modules/most_relevant_tab_resumption/most_relevant_tab_resumption_proxy.js';
-export {IconContainerElement} from './modules/tab_groups/icon_container.js';
-export {COLOR_NEW_TAB_PAGE_MODULE_TAB_GROUPS_DOT_PREFIX, COLOR_NEW_TAB_PAGE_MODULE_TAB_GROUPS_PREFIX, colorIdToString, tabGroupsDescriptor, TabGroupsModuleElement} from './modules/tab_groups/module.js';
-export {TabGroupsProxyImpl} from './modules/tab_groups/tab_groups_proxy.js';
 export {NtpComposeboxElement} from './ntp_composebox.js';
 export {IndividualPromosElement} from './ntp_promo/individual_promos.js';
 export {NtpPromoProxyImpl} from './ntp_promo/ntp_promo_proxy.js';
