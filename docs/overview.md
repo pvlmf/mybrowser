@@ -12,11 +12,11 @@
 | origin | `git@github.com:pvlmf/mybrowser.git` |
 | 親リポジトリ | `chromium/chromium` |
 | ブランチ | `dev`（作業用）／`main`（フォークの追従用） |
-| HEAD | `e3c9f8040a`（2026-10-19、upstream と同一 SHA） |
-| 独自コミット | 1件（`721ec0cee3` NTP 背景色） |
+| HEAD | `9c7069962e2d`（2026-10-24、`dev` の現行 HEAD） |
+| `main` との差 | `dev` が 42 コミット先行、0 コミット後退（確認: 2026-10-24） |
 | 履歴 | shallow（depth 1） |
 
-### shallow clone の制約
+### ブランチの役割と shallow clone の制約
 
 - 過去コミットの参照・rebase はできない
 - 履歴が必要なら `git fetch --deepen=100` などで段階的に取得

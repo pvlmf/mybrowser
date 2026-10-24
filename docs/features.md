@@ -86,7 +86,7 @@ Chromium の更新（特にセキュリティ修正）を追う場合、コー�
 
 | # | 機能 | 説明 | AI | 使う? | 判断 |
 |---|---|---|---|---|---|
-| 1 | モジュール（カード） | ショートカット下のカード（カレンダー、Drive/OneDrive、タブ再開、タブグループ） | 一部 | いいえ | **無効化済み**（コード削除は Remove 候補、Google/外部サービス + AI） |
+| 1 | モジュール（カード） | ショートカット下のカード（カレンダー、Drive/OneDrive、タブ再開、タブグループ） | 一部 | いいえ | **WebUI 資産削除済み**（C++ バックエンド等は維持） |
 | 2 | composebox | 検索ボックス内の AI 作成・添付 UI | はい | — | **無効化済み**（AI 方針） |
 | 3 | Lens | 画像で検索する機能 | はい | — | **無効化済み**（AI 方針） |
 | 4 | action chips | 検索ボックス下の AI 提案チップ（Deep Search、画像生成など） | はい | — | **無効化済み**（AI 方針） |
@@ -101,7 +101,7 @@ Chromium の更新（特にセキュリティ修正）を追う場合、コー�
 - **モジュール**: `chrome/browser/resources/new_tab_page/modules/`。カレンダー、Drive/OneDrive のファイル提案、最近のタブの再開、タブグループなど。タブ再開・ファイル提案はランキング/ML を使うため AI 系として扱う。方針: 全モジュールを Remove 候補（Google/外部サービス + AI）。使うものがあれば個別に残す。
 - **composebox**: `ntp_composebox.*`、`chrome/browser/ui/webui/new_tab_page/composebox/`。フラグ `ntp_composebox::kNtpComposebox`（デフォルト有効）。
 - **Lens**: `lens_form.*`、`lens_upload_dialog.*`、`components/lens/`。フラグ `lens::kLensStandalone` など。omnibox と共有する部分があるため、コード削除は慎重に。
-- **action chips**: `new_tab_page/action_chips/`、C++ 側 `chrome/browser/ui/webui/new_tab_page/action_chips/`。`AimEligibilityService` の eligibility で表示される AI Mode の機能。
+- **action chips**: WebUI は `chrome/browser/resources/new_tab_page/action_chips/`、C++ は `chrome/browser/ui/webui/new_tab_page/action_chips/`。現在は `AreActionChipsEnabled()` が `false` を返すため無効化されているが、TS の import/export、GN 依存、C++ handler/generator/metrics、Mojo 参照、実ファイルは残っている。**Remove は未実施**。削除前に入口から依存を追い、他機能との共有部品を切り分ける。
 - **カスタマイズ**: `customize_buttons_proxy.ts`、`side_panel/customize_chrome/`。背景画像・テーマに必要なので Keep。
 - **OneGoogleBar**: `chrome/browser/new_tab_page/one_google_bar/`。方針: 使わないので Hide → Remove（Google 連携）。
 - **ショートカット**: `cr-most-visited`（共有コンポーネント）。`ntp_features::kNtpShortcuts`。
@@ -119,7 +119,7 @@ Chromium の更新（特にセキュリティ修正）を追う場合、コー�
 
 - 変更: `AreActionChipsEnabled()` を `return false;` に固定
 - 確認: NTP 表示、`thisismybrowser` ラベルあり、`ntp-action-chips` なし、`isActionChipsVisible_` false
-- その後: `action_chips/` と参照を削除（Remove、別コミット）
+- 現在のコード確認（2026-10-24）: `AreActionChipsEnabled()` は `false` 固定だが、`action_chips/` の WebUI / C++ 実装、`lazy_load.ts` の import/export、GN 依存は残っている。**無効化済みであり、コード削除済みではない**。
 
 ### 実装済み（Stage 2-2: composebox）
 
@@ -150,13 +150,14 @@ Chromium の更新（特にセキュリティ修正）を追う場合、コー�
 - 変更: `NewTabPageUI::OnLoad()` の `modulesEnabled` を false
 - 確認: `modulesEnabled_` false、`#modules` なし、ショートカットは残る
 - 学び: `loadTimeData.getBoolean()` はキーの存在を前提にするため、値だけ変えてキーは残す
-- 次: モジュールの C++ / WebUI を削除（Remove、別コミット）か、ブラウザ全体の棚卸し
+- 次: ブラウザ全体の AI / Google 連携を棚卸しする。モジュール WebUI の削除済み資産と、維持している C++ / Mojo の依存は区別して記録する。
 
-### 次の実装（Stage 2-7: モジュール削除）
+### 実装済み（Stage 2-7: モジュール WebUI 削除）
 
-- 計画: [notes/2026-10-22-modules-removal-plan.md](notes/2026-10-22-modules-removal-plan.md)
-- 最初は Phase 1a + 1b（NTP の WebUI からモジュールを外し、リソースを削除）
-- C++ バックエンドの削除は、上流との衝突コストを見てから決める
+- 実施時の計画: [notes/2026-10-22-modules-removal-plan.md](notes/2026-10-22-modules-removal-plan.md)
+- Phase 1a + 1b として、NTP の WebUI からモジュールを外し、製品資産とモジュール専用テストを削除済み
+- C++ バックエンド、`untrusted/`、Customize のカード定義、enum の履歴値、およびビルド上必要な一部 Mojo 依存は維持
+- ビルド・テスト・実ブラウザ確認の結果は `docs/log.md` の 2026-10-24 の記録を参照。次の機能の削除前にもコードと記録の照合を行う
 
 ## 台帳（NTP 以外）
 

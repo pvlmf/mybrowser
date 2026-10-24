@@ -21,10 +21,10 @@
     - `chrome/test/data/webui/new_tab_page/modules/` を削除する
     - 確認: 製品 `build_ts` 成功、テスト `build_ts` 成功（0 errors）、`chrome/test/data/webui:browser_tests` 成功、`./scripts/build-chrome.sh` 成功
     - 確認: 実ブラウザで `cr-most-visited` / `ntp-customize-buttons` / `ntp-searchbox` / ラベルが表示され、`#modules` と Microsoft 認証 iframe がない
-  - Step 2（次にやる）: 製品 WebUI からモジュール資産を削除する
-    - `lazy_load.ts` のモジュール export、`new_tab_page.gni`、`resources/new_tab_page/BUILD.gn`、`new_tab_page.ts` のモジュール Mojo export を整理する
-    - `chrome/browser/resources/new_tab_page/modules/` を削除する
-  - 完了条件: 両方の `build_ts`、`chrome/test/data/webui:browser_tests`、フルビルド、実ブラウザで検索・ショートカット・ラベル・カスタマイズが維持されることを確認する
+  - [x] Step 2（完了 2026-10-24）: 製品 WebUI からモジュール資産を削除する
+    - 完了: `lazy_load.ts` のモジュール export、`new_tab_page.gni`、`resources/new_tab_page/BUILD.gn`、`new_tab_page.ts` のモジュール Mojo export を整理
+    - 削除済み: `chrome/browser/resources/new_tab_page/modules/`（77 ファイル）
+  - 確認（`docs/log.md` の作業記録）: 製品 TS・テスト TS・`chrome/test/data/webui:browser_tests`・`./scripts/build-chrome.sh` が成功。実ブラウザで検索・ショートカット・ラベル・カスタマイズが残り、モジュールと Microsoft 認証 iframe がないことを確認
   - 維持: C++ バックエンド、`chrome/browser/ui/webui/new_tab_page/`、`chrome/browser/resources/new_tab_page/untrusted/`、`CustomizeDialogPage.MODULES`、enum の履歴値
   - 注意: このクローンは fetch refspec が `main` のみで、ローカルに `origin/dev` 追跡ブランチがない。`git fetch origin dev` を使う
 
@@ -72,7 +72,7 @@
 - [x] ビルドと起動を一括する `scripts/dev.sh` を追加
 - [x] 検索ボックスの幅を変更（広い画面で 1520px）
 
-## 次にやる（候補）
+## 予備の学習候補（削除作業より後）
 
 - [ ] `app.html` を読んで NTP の画面構造を把握
 - [ ] 検索ボックス・ロゴ・モジュールの配置を1つ変えてみる
