@@ -210,99 +210,6 @@ IN_PROC_BROWSER_TEST_F(NewTabPageNtpPromoTest, IndividualPromosTest) {
   RunTest("new_tab_page/ntp_promo/individual_promos_test.js", "mocha.run()");
 }
 
-using NewTabPageModulesTest = NewTabPageBrowserTest;
-
-IN_PROC_BROWSER_TEST_F(NewTabPageModulesTest, ModuleWrapper) {
-  RunTest("new_tab_page/modules/module_wrapper_test.js", "mocha.run()");
-}
-
-IN_PROC_BROWSER_TEST_F(NewTabPageModulesTest, ModulesV2) {
-  RunTest("new_tab_page/modules/modules_test.js", "mocha.run()");
-}
-
-IN_PROC_BROWSER_TEST_F(NewTabPageModulesTest, ModuleHeaderV2) {
-  RunTest("new_tab_page/modules/module_header_test.js", "mocha.run()");
-}
-
-IN_PROC_BROWSER_TEST_F(NewTabPageModulesTest, ModuleDescriptor) {
-  RunTest("new_tab_page/modules/module_descriptor_test.js", "mocha.run()");
-}
-
-IN_PROC_BROWSER_TEST_F(NewTabPageModulesTest, ModuleRegistry) {
-  RunTest("new_tab_page/modules/module_registry_test.js", "mocha.run()");
-}
-
-IN_PROC_BROWSER_TEST_F(NewTabPageModulesTest, InfoDialog) {
-  RunTest("new_tab_page/modules/info_dialog_test.js", "mocha.run()");
-}
-
-#if !defined(OFFICIAL_BUILD)
-// The dummy module is not available in official builds.
-IN_PROC_BROWSER_TEST_F(NewTabPageModulesTest, DummyModule) {
-  RunTest("new_tab_page/modules/dummy/module_test.js", "mocha.run()");
-}
-#endif  // !defined(OFFICIAL_BUILD)
-
-IN_PROC_BROWSER_TEST_F(NewTabPageModulesTest, Calendar) {
-  RunTest("new_tab_page/modules/calendar/calendar_test.js",
-          "runMochaSuite('NewTabPageModulesCalendarTest general')");
-}
-
-IN_PROC_BROWSER_TEST_F(NewTabPageModulesTest, CalendarMetrics) {
-  RunTest("new_tab_page/modules/calendar/calendar_test.js",
-          "runMochaSuite('NewTabPageModulesCalendarTest metrics')");
-}
-
-IN_PROC_BROWSER_TEST_F(NewTabPageModulesTest, CalendarEvent) {
-  RunTest("new_tab_page/modules/calendar/calendar_event_test.js",
-          "runMochaSuite('NewTabPageModulesCalendarEventTest general')");
-}
-
-IN_PROC_BROWSER_TEST_F(NewTabPageModulesTest, CalendarEventMetrics) {
-  RunTest("new_tab_page/modules/calendar/calendar_event_test.js",
-          "runMochaSuite('NewTabPageModulesCalendarEventTest metrics')");
-}
-
-IN_PROC_BROWSER_TEST_F(NewTabPageModulesTest, GoogleCalendarModule) {
-  RunTest("new_tab_page/modules/calendar/google_calendar_module_test.js",
-          "mocha.run()");
-}
-
-IN_PROC_BROWSER_TEST_F(NewTabPageModulesTest, OutlookCalendarModule) {
-  RunTest("new_tab_page/modules/calendar/outlook_calendar_module_test.js",
-          "mocha.run()");
-}
-
-IN_PROC_BROWSER_TEST_F(NewTabPageModulesTest, DriveModuleV2) {
-  RunTest("new_tab_page/modules/file_suggestion/drive_module_test.js",
-          "mocha.run()");
-}
-
-// TODO(crbug.com/534399662): Flaky on Windows.
-#if BUILDFLAG(IS_WIN)
-#define MAYBE_FileSuggestion DISABLED_FileSuggestion
-#else
-#define MAYBE_FileSuggestion FileSuggestion
-#endif
-IN_PROC_BROWSER_TEST_F(NewTabPageModulesTest, MAYBE_FileSuggestion) {
-  RunTest("new_tab_page/modules/file_suggestion/file_suggestion_test.js",
-          "mocha.run()");
-}
-
-IN_PROC_BROWSER_TEST_F(NewTabPageModulesTest, MicrosoftFilesModule) {
-  RunTest("new_tab_page/modules/file_suggestion/microsoft_files_module_test.js",
-          "mocha.run()");
-}
-
-IN_PROC_BROWSER_TEST_F(NewTabPageModulesTest, MicrosoftAuthModule) {
-  RunTest("new_tab_page/modules/authentication/microsoft_auth_module_test.js",
-          "mocha.run()");
-}
-
-IN_PROC_BROWSER_TEST_F(NewTabPageModulesTest, TabGroupsModule) {
-  RunTest("new_tab_page/modules/tab_groups/module_test.js", "mocha.run()");
-}
-
 using NewTabPageAppTest = NewTabPageBrowserTest;
 
 IN_PROC_BROWSER_TEST_F(NewTabPageAppTest, Misc) {
@@ -341,16 +248,6 @@ IN_PROC_BROWSER_TEST_F(NewTabPageAppTest, Promo) {
 IN_PROC_BROWSER_TEST_F(NewTabPageAppTest, Clicks) {
   RunTest("new_tab_page/app_test.js",
           "runMochaSuite('NewTabPageAppTest Clicks')");
-}
-
-IN_PROC_BROWSER_TEST_F(NewTabPageAppTest, V2Modules) {
-  RunTest("new_tab_page/app_test.js",
-          "runMochaSuite('NewTabPageAppTest V2Modules')");
-}
-
-IN_PROC_BROWSER_TEST_F(NewTabPageAppTest, CounterfactualModules) {
-  RunTest("new_tab_page/app_test.js",
-          "runMochaSuite('NewTabPageAppTest CounterfactualModules')");
 }
 
 IN_PROC_BROWSER_TEST_F(NewTabPageAppTest, CustomizeChromeSidePanel) {
@@ -434,11 +331,6 @@ IN_PROC_BROWSER_TEST_F(NewTabPageAppTest, DISABLED_WallpaperSearch) {
           "runMochaSuite('NewTabPageAppTest WallpaperSearch')");
 }
 
-IN_PROC_BROWSER_TEST_F(NewTabPageAppTest, MicrosoftAuth) {
-  RunTest("new_tab_page/app_test.js",
-          "runMochaSuite('NewTabPageAppTest MicrosoftAuth')");
-}
-
 IN_PROC_BROWSER_TEST_F(NewTabPageAppTest, NewTabFooter) {
   RunTest("new_tab_page/app_test.js",
           "runMochaSuite('NewTabPageAppTest NewTabFooter')");
@@ -491,25 +383,4 @@ IN_PROC_BROWSER_TEST_F(NewTabPageAppTest, EnergyEffectVariant) {
 IN_PROC_BROWSER_TEST_F(NewTabPageAppTest, LeftHandSide) {
   RunTest("new_tab_page/app_test.js",
           "runMochaSuite('NewTabPageAppTest LeftHandSide')");
-}
-
-class NewTabPageModulesMostRelevantTabResumptionModuleTest
-    : public NewTabPageBrowserTest {
- protected:
-  NewTabPageModulesMostRelevantTabResumptionModuleTest() {
-    scoped_feature_list_.InitWithFeatures(
-        /*enabled_features=*/{ntp_features::
-                                  kNtpMostRelevantTabResumptionModule},
-        /*disabled_features=*/{});
-  }
-
- private:
-  base::test::ScopedFeatureList scoped_feature_list_;
-};
-
-IN_PROC_BROWSER_TEST_F(NewTabPageModulesMostRelevantTabResumptionModuleTest,
-                       Core) {
-  RunTest("new_tab_page/modules/most_relevant_tab_resumption/module_test.js",
-          "runMochaSuite('NewTabPageModulesMostRelevantTabResumptionModuleTest "
-          "Core')");
 }

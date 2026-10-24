@@ -14,16 +14,18 @@
     - 製品 TS `chrome/browser/resources/new_tab_page:build_ts` は成功
     - テスト TS `chrome/test/data/webui/new_tab_page:build_ts` は失敗（66 errors / 24 files）
     - 原因: `cd41dcc` がモジュールテストをビルドに残したまま `lazy_load.ts` の export を削除し、Composebox / Lens / Voice search の export も巻き込んだ
-  - Step 1（次にやる）: テスト側をモジュールから切り離し、通常機能の export を復元する
-    - `cd41dcc` で消された Composebox / Lens / Voice search の export だけを `lazy_load.ts` に戻す（モジュール用 export は戻さず、Step 2 で残りも削除する）
+  - [x] Step 1（完了 2026-10-24）: テスト側をモジュールから切り離し、通常機能の export を復元する
+    - `lazy_load.ts` に Composebox / Lens / Voice search の export を復元（モジュール用 export は戻さず、Step 2 で残りも削除する）
     - テスト `BUILD.gn` から `modules_test_files` を外す
     - `app_focus_test.ts` のモジュール import / mock を削除する
     - `new_tab_page_browsertest.cc` のモジュール suite と、TS 側に存在しない `V2Modules` / `CounterfactualModules` / `MicrosoftAuth` 登録を削除する
     - `chrome/test/data/webui/new_tab_page/modules/` を削除する
-  - Step 2: 製品 WebUI からモジュール資産を削除する
+    - 確認: 製品 `build_ts` 成功、テスト `build_ts` 成功（0 errors）、`chrome/test/data/webui:browser_tests` 成功、`./scripts/build-chrome.sh` 成功
+    - 確認: 実ブラウザで `cr-most-visited` / `ntp-customize-buttons` / `ntp-searchbox` / ラベルが表示され、`#modules` と Microsoft 認証 iframe がない
+  - Step 2（次にやる）: 製品 WebUI からモジュール資産を削除する
     - `lazy_load.ts` のモジュール export、`new_tab_page.gni`、`resources/new_tab_page/BUILD.gn`、`new_tab_page.ts` のモジュール Mojo export を整理する
     - `chrome/browser/resources/new_tab_page/modules/` を削除する
-  - 完了条件: 両方の `build_ts`、`chrome/test/data/webui/new_tab_page:build`、フルビルド、実ブラウザで検索・ショートカット・ラベル・カスタマイズが維持されることを確認する
+  - 完了条件: 両方の `build_ts`、`chrome/test/data/webui:browser_tests`、フルビルド、実ブラウザで検索・ショートカット・ラベル・カスタマイズが維持されることを確認する
   - 維持: C++ バックエンド、`chrome/browser/ui/webui/new_tab_page/`、`chrome/browser/resources/new_tab_page/untrusted/`、`CustomizeDialogPage.MODULES`、enum の履歴値
   - 注意: このクローンは fetch refspec が `main` のみで、ローカルに `origin/dev` 追跡ブランチがない。`git fetch origin dev` を使う
 
@@ -80,7 +82,7 @@
 
 ## ルール
 
-- エージェントはコード編集禁止（提案のみ）。todo.txt の更新と管理用スクリプトは可
+- エージェントは、依頼された削除・整理・機械的変更を実装してよい。新機能や設計判断が必要な変更は提案ベース
 - ビルド: `./scripts/build-chrome.sh`
 - 起動: `./scripts/run-chrome.sh`
 - 学びは `docs/notes/` に日付付きで残す

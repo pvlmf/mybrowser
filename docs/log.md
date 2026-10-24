@@ -125,3 +125,29 @@
   - `./scripts/build-chrome.sh`: この日は未実行。最後の `chrome` ビルドは 13:52 に成功しているが、`cd41dcc` のコミット後の検証記録はない
   - 実ブラウザ確認: この日は未実施
   - 次の作業: `todo.txt` の Phase 1b Step 1（テスト側の切り離しと通常 export の復元）から
+
+## 2026-10-24
+
+- NTP モジュール削除 Phase 1b Step 1: テスト側の切り離しと通常 export の復元
+  - `lazy_load.ts` に Composebox / Lens / Voice search / NTP composebox の通常 export を戻した
+  - `chrome/test/data/webui/new_tab_page/BUILD.gn` から `modules.gni` の import と `modules_test_files` を削除
+  - `app_focus_test.ts` からモジュール import / `ModuleRegistry` / `PromiseResolver` / モジュール mock を削除
+  - `new_tab_page_browsertest.cc` からモジュール suite、`V2Modules`、`CounterfactualModules`、`MicrosoftAuth`、Most Relevant suite を削除
+  - `chrome/test/data/webui/new_tab_page/modules/` を削除
+  - 確認: `PATH="$HOME/depot_tools:$PATH" autoninja -C out/Release -j 6 chrome/browser/resources/new_tab_page:build_ts` 成功
+  - 確認: `PATH="$HOME/depot_tools:$PATH" autoninja -C out/Release -j 6 chrome/test/data/webui/new_tab_page:build_ts` 成功（TS エラー 0）
+  - 確認: `PATH="$HOME/depot_tools:$PATH" autoninja -C out/Release -j 6 chrome/test/data/webui:browser_tests` 成功
+    - 補足: `chrome/test/data/webui/new_tab_page:build` というビルドターゲットは存在しない。C++ の確認は `chrome/test/data/webui:browser_tests` を使う
+  - 確認: `./scripts/build-chrome.sh` 成功（15:20:57）。`chrome` バイナリ自体は再リンクされなかったが、`out/Release/resources.pak` は更新された
+  - 確認: 新規プロファイル + `--headless=new` + CDP で `chrome://new-tab-page/` の `ntp-app.shadowRoot` を検査
+    - `cr-most-visited`: あり（`lazyRender_` 後に出現）
+    - `ntp-customize-buttons`: あり
+    - `ntp-searchbox`: あり
+    - `#mybrowserLabel`: `thisismybrowser`
+    - `#modules` / `ntp-modules` / `iframe#microsoftAuth`: なし
+    - モジュール関連プロパティ: なし
+    - `browserPromoType_`: `disabled`
+    - console error: なし
+  - 学び: NTP のショートカットとカスタマイズボタンは `lazyRender_` が true になった後に描画される。CDP 確認では shadow root の存在だけでなく、対象要素の出現まで待つ
+  - 学び: `chrome` バイナリのタイムスタンプが古くても、WebUI リソースは `resources.pak` 経由で更新されることがある
+  - 学び: テスト C++ のビルドターゲットは `chrome/test/data/webui/new_tab_page:build` ではなく `chrome/test/data/webui:browser_tests`
