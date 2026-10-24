@@ -196,3 +196,12 @@
   - History UI には Google My Activity / Gemini アプリ活動へのリンクと Sync / サインイン案内がある
 - これはソースを読んだ静的調査。ローカルの `gn refs`、ビルド、テスト、実ブラウザ確認は未実施。コード変更も行っていない
 - 次の作業: AI Overlay Dialog または History の Google / 同期案内 UI を対象に、参照・GN target・Mojo・テストを詳細追跡する
+
+
+## 2026-10-24（AI Overlay Dialog の削除計画）
+
+- Overlay の専用入口・Controller・toolbar ActionItem・untrusted WebUI / Mojo・Android JNI・Profile pref・feature flags・URL/switch definitions・GN target を調査
+- 削除計画を `docs/notes/2026-10-24-ai-overlay-dialog-removal-plan.md` に作成
+- 方針: Overlay 専用コードは切り離し候補。Glic / TTC core / Actor / Optimization Guide / Page Content Annotations など共有基盤は削除しない
+- `chrome/browser/ttc/resources/` は Overlay UI 専用と見られるが、削除前にローカル `gn refs` で別 consumer がないことを確認する
+- 今回は計画のみ。ローカル参照全文検索、GN、ビルド、テスト、実ブラウザ確認は未実施。次は隔離した候補ブランチでソース変更を行い、ローカルビルドと実ブラウザ確認後に `dev` へ統合する
