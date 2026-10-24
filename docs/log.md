@@ -216,3 +216,15 @@
 - GitHub 上で更新対象ファイル内の Overlay 参照が残っていないことを静的チェックした。これは全リポジトリの `rg` や GN dependency graph の検証を代替しない
 - ローカルの `gn refs`、`gn gen`、ビルド、テスト、実ブラウザ確認は未実施。候補ブランチは未検証のため `dev` へ統合しない
 - 次: ローカルで変更前の `gn refs` を保存し、候補ブランチで残存参照、GN generation、テスト、フルビルド、実ブラウザを確認する。問題があれば候補ブランチを修正してから再検証
+
+
+## 2026-10-24（AI Overlay Dialog 削除案の残存参照を追跡）
+
+- 最初の候補差分後に残存参照を追い、以下を追加で削除:
+  - `chrome/browser/ui/views/frame/contents_container_view.cc/.h`: Overlay 用 WebView の生成、角丸設定、レイアウト、getter / member
+  - `chrome/browser/ui/browser_element_identifiers.h/.cc`: Overlay WebView の Element Identifier
+  - `chrome/browser/ui/views/frame/BUILD.gn`: Overlay Controller target 依存
+  - `chrome/test/BUILD.gn`: WebUI `browser_tests` の2参照と `unit_tests` の1参照
+- TTC UI 資産について、`chrome/browser/ttc/app/BUILD.gn`、`chrome/browser/ttc/core/BUILD.gn`、`chrome/browser/BUILD.gn`、`chrome/browser/ui/BUILD.gn`、`chrome/browser/ui/webui/BUILD.gn`、`chrome/browser/ui/browser_window/internal/BUILD.gn`、`chrome/browser/ui/views/toolbar/BUILD.gn`、`chrome/browser/ui/views/frame/BUILD.gn`、`chrome/test/BUILD.gn` の該当箇所を確認。別 consumer は見つからず、Overlay UI / Notes 専用の `chrome/browser/ttc/resources/` も候補ブランチから削除
+- 削除対象は専用コード 72 ファイル（Controller 9、WebUI / Mojo / tools / tests 30、Android bridge 4、toolbar button 2、TTC resources 27）
+- これは GitHub ソースの静的レビュー。全リポジトリの `rg`、`gn refs`、`gn gen`、ビルド、テスト、実ブラウザ確認は未実施。ローカルで GN が別 consumer を示した場合は復元して依存を再分離し、エラーが解消してから `dev` への統合を検討する

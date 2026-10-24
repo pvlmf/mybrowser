@@ -32,11 +32,11 @@
 
 - [x] Stage 1-2: ブラウザ全体の AI / Google 連携の一次棚卸し（2026-10-24）
   - 記録: `docs/features.md` の NTP 以外の台帳。初期調査の限界は `docs/log.md` に記録
-- [ ] Stage 1-3: AI Overlay Dialog の削除（候補ブランチに実装案を作成、ローカル検証待ち）
+- [ ] Stage 1-3: AI Overlay Dialog の専用コード削除（候補ブランチに削除案作成済み、ローカル GN / ビルド検証待ち）
   - 計画: [notes/2026-10-24-ai-overlay-dialog-removal-plan.md](docs/notes/2026-10-24-ai-overlay-dialog-removal-plan.md)
   - 候補ブランチ: [agent/remove-ai-overlay-dialog](https://github.com/pvlmf/mybrowser/tree/agent/remove-ai-overlay-dialog)
-  - 変更案: Overlay 専用 UI / Controller / Action / WebUI / Mojo / Android bridge / feature / pref / URL / switch / GN 参照を削除
-  - 保留: `chrome/browser/ttc/resources/` は別 consumer の有無をローカル `gn refs` で確認するまで維持
+  - 削除案: Controller / ContentsContainerView の埋め込み WebView / Action / WebUI / Mojo / Android bridge / feature / pref / URL / switch / GN / test aggregate 参照を削除。専用 UI 資産 72 ファイルを削除
+  - TTC resources: 専用 UI / Notes 資産として候補ブランチで削除。関連 BUILD.gn の静的確認では他 consumer は見つからなかったが、ローカル `gn refs` は未実施
   - 維持: Glic、TTC core / app、Actor、Optimization Guide、Page Content Annotations など共有基盤
   - 必須: 変更前の `gn refs` を保存し、候補ブランチで GN generation、`browser_tests`、`unit_tests`、フルビルド、実ブラウザを確認。未検証のため `dev` には統合しない
 

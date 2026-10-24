@@ -2,7 +2,7 @@
 
 更新日: 2026-10-24
 対象ブランチ: `dev`（計画作成時点）
-状態: **候補ブランチに削除案を作成。ローカル検証待ち。**
+状態: **候補ブランチに専用コード削除案を作成。ローカル GN / ビルド / テスト検証待ち。**
 
 ## 目的と範囲
 
@@ -25,7 +25,7 @@ Chromium に含まれる試作の AI Overlay Dialog を削除する。これは�
 
 - `chrome/browser/ui/webui/ai_overlay_dialog/`: untrusted WebUI、PageHandler、Mojo、ページ文脈監視、Markdown builder、WebMCP tools、専用テストを持つ。
 - `chrome/browser/ui/webui/chrome_untrusted_web_ui_configs.cc`: `AiOverlayDialogUntrustedUIConfig` を untrusted WebUI registry に登録する。
-- `chrome/browser/ttc/resources/`: `chrome-untrusted://ai-overlay-dialog/` と Notes ページの WebUI 資産。確認した BUILD 依存は `chrome/browser/ui/webui/ai_overlay_dialog/BUILD.gn` の `//chrome/browser/ttc/resources`。
+- `chrome/browser/ttc/resources/`: `chrome-untrusted://ai-overlay-dialog/` と Notes ページの専用 WebUI 資産。候補ブランチではこれらも削除対象に含めた。
 - `chrome/common/webui_url_constants.h`: `chrome-untrusted://ai-overlay-dialog/` の host / URL 定数。
 - `chrome/common/chrome_switches.h`: 自動起動・テスト API 用の `--ai-overlay-dialog-test-mode` スイッチ。
 
@@ -60,7 +60,7 @@ Chromium に含まれる試作の AI Overlay Dialog を削除する。これは�
    - `chrome/browser/ui/views/toolbar/ai_overlay_toolbar_button.cc/.h`
    - `chrome/browser/ui/webui/ai_overlay_dialog/`（tools / Mojo / tests を含む）
    - `chrome/browser/ui/android/ai_overlay_dialog/`
-   - `chrome/browser/ttc/resources/`（Overlay UI 専用。独立した GN 参照がないことをローカルの `gn refs` で確認後に削除）
+   - `chrome/browser/ttc/resources/`（Overlay UI / Notes の専用資産。候補ブランチでは削除済み。ローカル GN generation で別 consumer が判明した場合は復元して依存を再分離）
 4. generated Grit / Mojo の名前や生成先は手書きで直接変更せず、GN / WebUI のソースと依存から再生成させる。
 
 ### Phase C: 残存参照と回帰を確認する
@@ -103,8 +103,9 @@ gn refs out/Release //chrome/browser/ttc/resources
 
 - ブランチ: [`agent/remove-ai-overlay-dialog`](https://github.com/pvlmf/mybrowser/tree/agent/remove-ai-overlay-dialog)
 - Overlay 専用の Action / Controller / WebUI / Mojo / Android bridge、feature / pref / URL / test switch、GN 参照を削除する変更案を作成した
-- 専用の Controller 9 ファイル、WebUI / Mojo / tools / tests 30 ファイル、Android bridge 4 ファイル、toolbar button 2 ファイルを削除対象にした
-- `chrome/browser/ttc/resources/` は、別の consumer がないことを `gn refs` で確認できるまで意図的に残している
+- 専用の Controller 9 ファイル、WebUI / Mojo / tools / tests 30 ファイル、Android bridge 4 ファイル、toolbar button 2 ファイル、TTC UI / Notes 資産 27 ファイル、計 72 ファイルを削除した
+- 追加で `ContentsContainerView` の埋め込み WebView、Element Identifier、frame GN dependency、browser / unit test aggregate の残存参照を削除
+- 関連する主要 BUILD.gn では、TTC resources の consumer は削除した Overlay WebUI 以外に見つからなかった。ただしローカル `gn refs` は未実施のため、GN generation で確認する
 - この段階のコミットは候補ブランチ上のレビュー・ビルド用。ローカル検証前に `dev` へマージしない
 
 ## 現時点の制約
