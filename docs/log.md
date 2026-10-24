@@ -174,3 +174,25 @@
     - console error: なし
   - 学び: モジュール用に見える Mojo 依存でも、`new_tab_page.mojom-webui.ts` から推移的に import されているものは残す必要がある。削除前に生成 TS の import を確認する
   - 学び: `new_tab_page.ts` はテスト向けの再 export ファイルなので、モジュールテストを消すとモジュール用 Mojo export も安全に消せる
+
+
+## 2026-10-24（AI / Google 連携の初期棚卸し）
+
+- GitHub 上の `dev` のソースを静的に確認し、`docs/features.md` の NTP 以外の台帳を初期化
+- 主に確認した入口と実装:
+  - Glic / Gemini / Actor: `chrome/common/chrome_features.cc`、`chrome/browser/glic/public/features.cc`、`chrome/browser/ui/browser_actions.cc`、toolbar / tab-strip の Glic 連携
+  - Omnibox AI Mode / マルチモーダル: `components/omnibox/common/omnibox_features.cc`、`components/omnibox/browser/omnibox_field_trial.cc`、`chrome/browser/ui/browser_actions.cc`
+  - History Embeddings: `components/history_embeddings/core/history_embeddings_features.cc`、`chrome/browser/history_embeddings/history_embeddings_utils.cc`、`chrome/browser/history_embeddings/history_embeddings_service_factory.cc`、History WebUI
+  - Built-in AI: `chrome/browser/ai/BUILD.gn`、Blink AI Mojo、`components/on_device_ai`、設定ハンドラー
+  - Optimization Guide: `components/optimization_guide/core/optimization_guide_features.cc` と browser / component ディレクトリ
+  - Organizer Panel: `chrome/browser/ui/tabs/organizer/`、`chrome/browser/ui/views/tabs/organizer/`、`chrome/browser/ui/webui/organizer_panel/`
+  - History の Google リンク / プロモ: `chrome/browser/ui/webui/history/history_ui.cc`、`chrome/browser/resources/history/`
+  - Sign-in / Sync: `chrome/browser/ui/webui/signin/`、`components/signin/`、`components/sync/`
+- 確認結果:
+  - Linux では Glic の親 feature `features::kGlic` が既定無効。ただし他プラットフォームでは既定有効で、ソースと子機能は存在する
+  - History Embeddings と AI Overlay Dialog は主機能フラグが既定無効だが、関連 UI / 実装 / 依存 target は残っている
+  - Optimization Guide は AI 以外のページ最適化・予測機能とも共有されるため、全体削除の対象にしない
+  - Organizer Panel の AI との直接の関係は今回未確認。別機能として扱う
+  - History UI には Google My Activity / Gemini アプリ活動へのリンクと Sync / サインイン案内がある
+- これはソースを読んだ静的調査。ローカルの `gn refs`、ビルド、テスト、実ブラウザ確認は未実施。コード変更も行っていない
+- 次の作業: AI Overlay Dialog または History の Google / 同期案内 UI を対象に、参照・GN target・Mojo・テストを詳細追跡する

@@ -28,11 +28,13 @@
   - 維持: C++ バックエンド、`chrome/browser/ui/webui/new_tab_page/`、`chrome/browser/resources/new_tab_page/untrusted/`、`CustomizeDialogPage.MODULES`、enum の履歴値
   - 注意: このクローンは fetch refspec が `main` のみで、ローカルに `origin/dev` 追跡ブランチがない。`git fetch origin dev` を使う
 
-## 次回の候補
+## 作業中
 
-- [ ] Stage 1-2: ブラウザ全体の AI / Google 連携を棚卸しする
-  - 対象: 履歴の AI 検索、タブ整理、Optimization Guide、sync / signin など
-  - 成果物: `docs/features.md` の台帳（NTP 以外）を埋める
+- [ ] Stage 1-2: ブラウザ全体の AI / Google 連携を棚卸しする（一次調査を台帳へ反映、2026-10-24）
+  - 一次調査: Glic / Gemini、Omnibox AI Mode・マルチモーダル、Lens、History Embeddings、Built-in AI、Optimization Guide、Organizer Panel、History の Google リンク / プロモ、Sign-in / Sync の入口を確認
+  - 記録: `docs/features.md` の「台帳（NTP 以外）」と「初期棚卸しの結論」
+  - 未完了: 各入口から `BUILD.gn`、C++ / TypeScript、Mojo、feature override、テストへの参照を詳細確認し、次の小さな削除候補を選ぶ
+  - 次: AI Overlay Dialog または History の Google / 同期案内 UI の依存を追跡する。まだソース変更はしない
 
 ## 完了（最近）
 

@@ -12,8 +12,8 @@
 | origin | `git@github.com:pvlmf/mybrowser.git` |
 | 親リポジトリ | `chromium/chromium` |
 | ブランチ | `dev`（作業用）／`main`（フォークの追従用） |
-| HEAD | `9c7069962e2d`（2026-10-24、`dev` の現行 HEAD） |
-| `main` との差 | `dev` が 42 コミット先行、0 コミット後退（確認: 2026-10-24） |
+| 棚卸し開始時の HEAD | `8a67b25c13e1`（2026-10-24、開始時点での `dev`） |
+| `main` との差 | 棚卸し開始時に `dev` が 42 コミット先行、0 コミット後退（確認: 2026-10-24） |
 | 履歴 | shallow（depth 1） |
 
 ### ブランチの役割と shallow clone の制約

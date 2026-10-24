@@ -161,10 +161,28 @@ Chromium の更新（特にセキュリティ修正）を追う場合、コー�
 
 ## 台帳（NTP 以外）
 
-| # | 機能 | 使う? | 判断 | 場所 | 依存 | リスク | 状態 |
-|---|---|---|---|---|---|---|---|
-| 1 |  |  |  |  |  |  | 未調査 |
-| 2 |  |  |  |  |  |  | 未調査 |
+以下は `dev` のソースを静的に読んだ初期棚卸し（2026-10-24）。「機能が無効」と「コードが削除済み」は区別する。依存先を網羅した最終台帳ではなく、次に `BUILD.gn`・feature override・テスト・`gn refs` で調べる範囲を決めるための入口一覧。
+
+| # | 機能・入口 | 確認できた状態 | 主なコード・依存（入口から確認した範囲） | 推奨する進め方 | リスク |
+|---|---|---|---|---|---|
+| 1 | Glic / Gemini in Chrome / Actor | Linux では親フラグ `features::kGlic` が既定無効。Mac / Windows / ChromeOS / Android では既定有効。子機能の一部（コンテキストメニュー、選択テキスト UI）は非 Android で既定有効 | `chrome/common/chrome_features.cc`、`chrome/browser/glic/`、`chrome/browser/ui/browser_actions.cc`、`chrome/browser/ui/views/toolbar/glic/`、`chrome/browser/ui/views/tabs/glic/`。プロフィール適格性、サービス、設定、cookie / storage partition 等に接続 | まず Linux でも表示・動作し得る各入口を確認し、親フラグと UI を制御。コード一括削除は後回し | 高 |
+| 2 | Omnibox AI Mode / マルチモーダル入力 / Gemini Starter Pack | `kOmniboxMultimodalInput` と `kAim3pEntrypoint` は既定有効。AI Mode の ActionItem は `AiModeButtonServiceFactory` のサービス取得後に登録される | `components/omnibox/common/omnibox_features.cc`、`components/omnibox/browser/omnibox_field_trial.cc`、`chrome/browser/ui/browser_actions.cc`。通常の URL 入力・検索と共有する | 通常検索を残し、AI Mode・マルチモーダルの入口ごとに無効化を先行。omnibox 全体は削除しない | 高 |
+| 3 | Lens / 画像検索（NTP 以外） | NTP の Lens ボタンは無効化済みだが、ブラウザ内の他の Lens 入口がすべて無効とは未確認 | `components/lens/`、`chrome/browser/ui/views/toolbar/`、ページアクションやコンテキストメニュー周辺。共有コンポーネントの参照調査が必要 | NTP の状態とブラウザ全体の状態を分けて確認し、Omnibox / 画像検索の共有部を切り分ける | 高 |
+| 4 | History Embeddings（履歴の意味検索・回答） | `kHistoryEmbeddings`、`kHistoryEmbeddingsAnswers`、`kLaunchedHistoryEmbeddings` は既定無効。ただし feature override / Finch / 地域判定の経路があるため、既定値だけで完全無効とは断定しない | `chrome/browser/history_embeddings/`、`components/history_embeddings/`、`chrome/browser/resources/history/app.ts`、`chrome/browser/ui/webui/history/history_ui.cc`。Optimization Guide、Page Content Annotations、Passage Embeddings、Mojo と接続 | まず override と表示条件を追う。次に UI 資産・handler / Mojo・サービスを分けて削除可能性を判定 | 中〜高 |
+| 5 | Built-in AI / Web Platform AI APIs（要約・文章生成等） | コードと GN target が存在。設定ハンドラーは `GOOGLE_CHROME_BRANDING` 条件内だが、AI 実装自体は別途ビルド構成を確認する必要あり | `chrome/browser/ai/`、`chrome/browser/ai/BUILD.gn`、Blink の `third_party/blink/public/mojom/ai/`、`components/on_device_ai/`、Optimization Guide、Component Updater | Web API 側の入口・feature gate・Mojo の境界を調べ、ブラウザ UI の無効化だけで済むかを判定。基盤ごとの削除はしない | 高 |
+| 6 | Optimization Guide / モデル実行基盤 | `kOptimizationHints`、`kOptimizationTargetPrediction`、`kOptimizationGuideFetchingForSRP`、`kOptimizationGuideModelExecution` などが既定有効。機能によっては既定無効 | `chrome/browser/optimization_guide/`、`components/optimization_guide/`。履歴検索やオンデバイス AI など複数機能から参照 | コンポーネント全体は削除しない。AI 特有の消費者と一般の最適化・予測の消費者を分け、必要な範囲だけ無効化 | 非常に高 |
+| 7 | AI Overlay Dialog（試作の音声オーバーレイ） | `features::kAiOverlayDialog` は既定無効。ソースコメントも現状のまま本番利用しないよう明記 | `chrome/browser/ui/ai_overlay_dialog/`、`chrome/browser/ui/views/toolbar/ai_overlay_toolbar_button.cc`、`chrome/browser/ui/browser_actions.cc`、`chrome/browser/ui/ui_features.cc`。ActionItem、pref、ツールバー target と接続 | 既定無効を維持。削除候補として controller / action / pref / BUILD 参照を一式追跡する | 中 |
+| 8 | Organizer Panel / タブ整理関連 UI | `kOrganizerPanel` と関連する外国タブ・拡張機能表示フラグは既定無効。AI 機能との直接の関係は今回の調査では確定していない | `chrome/browser/ui/tabs/organizer/`、`chrome/browser/ui/views/tabs/organizer/`、`chrome/browser/ui/webui/organizer_panel/`。タブストリップ、拡張機能、タブグループ周辺と接続 | まず UI の目的とユーザー向け入口を確認。AI 削除対象だと決めつけず、不要な UI なら別機能として扱う | 中 |
+| 9 | History 内の Google / 同期 / サインイン案内 | 履歴ページから Google My Activity / Gemini アプリ活動へのリンクや、Sync / サインインの案内資産がある | `chrome/browser/ui/webui/history/history_ui.cc`、`chrome/browser/resources/history/history_sync_promo.*`、`history_cross_device_signin_promo.*`、`synced_device_manager.*` | 履歴・ブックマーク等の基本機能と、案内 UI / 外部リンクを分けて削除できるか確認する | 低〜中（案内 UI）、高（同期本体） |
+| 10 | Sign-in / Sync 本体 | 専用 UI と大規模なサービス群が存在。単純な無効化・削除の可否は未調査 | `chrome/browser/ui/webui/signin/`、`components/signin/`、`components/sync/`、Profile 管理、履歴同期、Glic の cookie 連携など | 最初からソースツリーを削らない。まずサインイン UI・同期 UI・関連プロモの入口を分け、ビルドフラグと必須依存を確認する | 非常に高 |
+
+### 初期棚卸しの結論
+
+- 最初に削除候補として詳細追跡するのは、機能境界と参照先を確かめた上での **AI Overlay Dialog**、または **History 内の Google / 同期プロモ UI**。どちらも基盤全体の削除とは分離して考えられる。
+- Glic、Omnibox AI Mode、History Embeddings、Built-in AI は、コード全体が存在することを確認した段階。次は各入口から `BUILD.gn`、C++、TypeScript、Mojo、feature override、テストへの参照を掘り下げる。
+- Optimization Guide と Sign-in / Sync は横断的依存が大きいため、親ディレクトリを丸ごと削除する計画にはしない。
+- Organizer Panel は既定無効だが、AI との関係は未確定。名前に「organizer」があるだけで AI 機能と同一視しない。
+- この調査は GitHub 上のソースの静的閲覧。ローカルの `gn refs`、ビルド、実ブラウザ確認はまだ行っていない。削除を決める前にローカル側の依存関係と確認結果で補完する。
 
 ## 削除の手順（1機能ごと）
 
