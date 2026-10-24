@@ -15,7 +15,7 @@
     - テスト TS `chrome/test/data/webui/new_tab_page:build_ts` は失敗（66 errors / 24 files）
     - 原因: `cd41dcc` がモジュールテストをビルドに残したまま `lazy_load.ts` の export を削除し、Composebox / Lens / Voice search の export も巻き込んだ
   - Step 1（次にやる）: テスト側をモジュールから切り離し、通常機能の export を復元する
-    - `lazy_load.ts` を `cd41dcc` の直前の状態に戻す（モジュール export は Step 2 で削除する）
+    - `cd41dcc` で消された Composebox / Lens / Voice search の export だけを `lazy_load.ts` に戻す（モジュール用 export は戻さず、Step 2 で残りも削除する）
     - テスト `BUILD.gn` から `modules_test_files` を外す
     - `app_focus_test.ts` のモジュール import / mock を削除する
     - `new_tab_page_browsertest.cc` のモジュール suite と、TS 側に存在しない `V2Modules` / `CounterfactualModules` / `MicrosoftAuth` 登録を削除する
