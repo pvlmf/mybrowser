@@ -22,10 +22,6 @@
 #include "chrome/browser/ui/lens/lens_side_panel_untrusted_ui.h"
 #endif  // defined(TOOLKIT_VIEWS)
 
-#if defined(TOOLKIT_VIEWS) || BUILDFLAG(IS_DESKTOP_ANDROID)
-#include "chrome/browser/ui/webui/ai_overlay_dialog/ai_overlay_dialog_untrusted_ui.h"
-#endif  // defined(TOOLKIT_VIEWS) || BUILDFLAG(IS_DESKTOP_ANDROID)
-
 #if BUILDFLAG(ENABLE_PRINT_PREVIEW)
 #include "chrome/browser/ui/webui/print_preview/print_preview_ui_untrusted.h"
 #endif  // BUILDFLAG(ENABLE_PRINT_PREVIEW)
@@ -83,11 +79,6 @@ void RegisterChromeUntrustedWebUIConfigs() {
   map.AddUntrustedWebUIConfig(
       std::make_unique<glic::SelectionOverlayUntrustedUIConfig>());
 #endif  // defined(TOOLKIT_VIEWS)
-
-#if defined(TOOLKIT_VIEWS) || BUILDFLAG(IS_DESKTOP_ANDROID)
-  map.AddUntrustedWebUIConfig(
-      std::make_unique<ttc::AiOverlayDialogUntrustedUIConfig>());
-#endif  // defined(TOOLKIT_VIEWS) || BUILDFLAG(IS_DESKTOP_ANDROID)
 
 #if BUILDFLAG(ENABLE_PRINT_PREVIEW)
   map.AddUntrustedWebUIConfig(

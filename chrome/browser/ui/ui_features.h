@@ -397,15 +397,6 @@ BASE_DECLARE_FEATURE(kAndroidAnimatedProgressBarInBrowser);
 bool IsAndroidAnimatedProgressBarInBrowserEnabled();
 #endif  // BUILDFLAG(IS_ANDROID)
 
-BASE_DECLARE_FEATURE(kAiOverlayDialog);
-BASE_DECLARE_FEATURE(kAiOverlayDialogDev);
-BASE_DECLARE_FEATURE_PARAM(std::string, kAiOverlayDialogApiKey);
-BASE_DECLARE_FEATURE_PARAM(std::string, kAiOverlayDialogMockJsonPath);
-BASE_DECLARE_FEATURE_PARAM(bool, kAiOverlayDialogUseMes);
-BASE_DECLARE_FEATURE_PARAM(bool, kAiOverlayDialogPageTools);
-BASE_DECLARE_FEATURE_PARAM(bool, kAiOverlayDialogNext);
-BASE_DECLARE_FEATURE(kAiOverlayDisableNavigationContext);
-
 BASE_DECLARE_FEATURE(kTabGroupsFocusing);
 BASE_DECLARE_FEATURE_PARAM(bool, kTabGroupsFocusFreezing);
 bool IsTabGroupsFocusFreezingEnabled();

@@ -42,7 +42,6 @@
 #include "chrome/browser/profiles/profiles_state.h"
 #include "chrome/browser/themes/theme_properties.h"
 #include "chrome/browser/ui/actions/chrome_action_id.h"
-#include "chrome/browser/ui/ai_overlay_dialog/ai_overlay_dialog_controller.h"
 #include "chrome/browser/ui/browser_actions.h"
 #include "chrome/browser/ui/browser_command_controller.h"
 #include "chrome/browser/ui/browser_commands.h"
@@ -560,22 +559,6 @@ void ToolbarView::Init() {
     media_button_ = toolbar_webview_->GetMediaToolbarButton();
   } else if (media_button) {
     media_button_ = AddChildView(std::move(media_button));
-  }
-
-  if (glic::GlicEnabling::IsProfileEligible(browser_view_->GetProfile())) {
-    if (base::FeatureList::IsEnabled(features::kAiOverlayDialog) &&
-        ttc::AiOverlayDialogController::From(browser_)) {
-      actions::ActionItem* action_item =
-          actions::ActionManager::Get().FindAction(
-              kActionShowAiOverlayDialog,
-              BrowserActions::From(browser_)->root_action_item());
-      if (action_item) {
-        action_item->SetVisible(true);
-        action_item->SetEnabled(true);
-        PinnedToolbarActionsModel::Get(browser_->GetProfile())
-            ->UpdatePinnedState(kActionShowAiOverlayDialog, true);
-      }
-    }
   }
 
   if (is_glic_left_of_profile &&

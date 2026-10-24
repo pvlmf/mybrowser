@@ -205,3 +205,14 @@
 - 方針: Overlay 専用コードは切り離し候補。Glic / TTC core / Actor / Optimization Guide / Page Content Annotations など共有基盤は削除しない
 - `chrome/browser/ttc/resources/` は Overlay UI 専用と見られるが、削除前にローカル `gn refs` で別 consumer がないことを確認する
 - 今回は計画のみ。ローカル参照全文検索、GN、ビルド、テスト、実ブラウザ確認は未実施。次は隔離した候補ブランチでソース変更を行い、ローカルビルドと実ブラウザ確認後に `dev` へ統合する
+
+
+## 2026-10-24（AI Overlay Dialog の削除候補ブランチ）
+
+- 候補ブランチ: `agent/remove-ai-overlay-dialog`（`dev` への統合は保留）
+- 変更案: 17 ファイルの C++ / ヘッダー / GN / feature / URL / switch 参照を更新し、Overlay 専用 45 ファイル（Controller 9、WebUI / Mojo / tools / tests 30、Android bridge 4、toolbar button 2）を削除
+- 削除対象から外したもの: `chrome/browser/ttc/resources/` は別 consumer の有無がまだ GN で確認できないため、候補ブランチにも残した
+- 維持: `chrome/browser/ttc/core/`、`chrome/browser/ttc/app/`、`components/ttc/app/`、Glic、Actor、Optimization Guide、Page Content Annotations 等の共有基盤
+- GitHub 上で更新対象ファイル内の Overlay 参照が残っていないことを静的チェックした。これは全リポジトリの `rg` や GN dependency graph の検証を代替しない
+- ローカルの `gn refs`、`gn gen`、ビルド、テスト、実ブラウザ確認は未実施。候補ブランチは未検証のため `dev` へ統合しない
+- 次: ローカルで変更前の `gn refs` を保存し、候補ブランチで残存参照、GN generation、テスト、フルビルド、実ブラウザを確認する。問題があれば候補ブランチを修正してから再検証

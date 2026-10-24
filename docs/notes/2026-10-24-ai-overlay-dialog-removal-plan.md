@@ -2,7 +2,7 @@
 
 更新日: 2026-10-24
 対象ブランチ: `dev`（計画作成時点）
-状態: **依存調査済み。ソース変更・ローカル検証は未実施。**
+状態: **候補ブランチに削除案を作成。ローカル検証待ち。**
 
 ## 目的と範囲
 
@@ -98,6 +98,14 @@ gn refs out/Release //chrome/browser/ttc/resources
 - TTC core 内の `ttc::EntrypointController` など、AI Overlay Dialog と別の BrowserWindow feature
 
 この区別を崩してディレクトリごと削除すると、Overlay 以外の機能まで壊す可能性がある。
+
+## 候補ブランチの実装案
+
+- ブランチ: [`agent/remove-ai-overlay-dialog`](https://github.com/pvlmf/mybrowser/tree/agent/remove-ai-overlay-dialog)
+- Overlay 専用の Action / Controller / WebUI / Mojo / Android bridge、feature / pref / URL / test switch、GN 参照を削除する変更案を作成した
+- 専用の Controller 9 ファイル、WebUI / Mojo / tools / tests 30 ファイル、Android bridge 4 ファイル、toolbar button 2 ファイルを削除対象にした
+- `chrome/browser/ttc/resources/` は、別の consumer がないことを `gn refs` で確認できるまで意図的に残している
+- この段階のコミットは候補ブランチ上のレビュー・ビルド用。ローカル検証前に `dev` へマージしない
 
 ## 現時点の制約
 

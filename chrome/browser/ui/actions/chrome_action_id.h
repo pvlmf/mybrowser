@@ -568,7 +568,6 @@
   E(kActionGlicContextualCueing) \
   E(kActionGlicTogglePin, IDC_GLIC_TOGGLE_PIN) \
   E(kActionOpenGlic, IDC_OPEN_GLIC) \
-  E(kActionShowAiOverlayDialog) \
   E(kActionAutofillPayment) \
   E(kActionWalletReminderNotice) \
   E(kActionGmailOtpOptIn) \
