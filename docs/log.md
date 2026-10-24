@@ -235,3 +235,6 @@
 - `chrome/browser/ttc/resources/` の27ファイル削除後に、GitHub の directory API に `internal` gitlink（mode `160000`）が残っていることを確認
 - 候補ブランチで `chrome/browser/ttc/resources/internal` の gitlink も削除。親の `chrome/browser/ttc/resources/` は存在しなくなり、`chrome/browser/ttc/core/` と `chrome/browser/ttc/app/` は維持
 - これは Git tree / path の静的確認のみ。ローカル `gn refs` / `gn gen` / build / tests / browser check は引き続き未実施
+
+
+- 追加の参照チェックで `chrome/browser/ui/webui/webui_urls_for_test.cc` の `chrome-untrusted://ai-overlay-dialog` 例外登録を発見し削除。削除した WebUI URL のテスト除外リストからも取り除いた
