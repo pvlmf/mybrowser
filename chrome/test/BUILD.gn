@@ -1078,7 +1078,6 @@ if (is_android) {
         "//chrome/browser/ui/browser_window:browser_tests",
         "//chrome/browser/ui/browser_window/internal:android_browsertests",
         "//chrome/browser/ui/browser_window/test:android_browser_test_support",
-        "//chrome/browser/ui/webui/ai_overlay_dialog:browser_tests",
         "//chrome/browser/ui/webui/omnibox_internals/aim_eligibility_extension:browser_tests",
       ]
     }
@@ -1528,7 +1527,6 @@ if (!is_android) {
       "//chrome/browser/ui/webauthn:browser_tests",
       "//chrome/browser/ui/webid:browser_tests",
       "//chrome/browser/ui/webui:browser_tests",
-      "//chrome/browser/ui/webui/ai_overlay_dialog:browser_tests",
       "//chrome/browser/ui/webui/app_service_internals:browser_tests",
       "//chrome/browser/ui/webui/autofill_and_password_manager_internals:browser_tests",
       "//chrome/browser/ui/webui/autofill_ml_internals:browser_tests",
@@ -3238,7 +3236,6 @@ test("unit_tests") {
       "//chrome/browser/ui/webui:favicon_source_unit_tests",
       "//chrome/browser/ui/webui:theme_source_unit_tests",
       "//chrome/browser/ui/webui/access_code_cast:unit_tests",
-      "//chrome/browser/ui/webui/ai_overlay_dialog:unit_tests",
       "//chrome/browser/ui/webui/app_management:unit_tests",
       "//chrome/browser/ui/webui/bookmarks:unit_tests",
       "//chrome/browser/ui/webui/browser_command:unit_tests",
