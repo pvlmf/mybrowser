@@ -3157,7 +3157,6 @@ source_set("contents_container_view_impl") {
     "//chrome/browser/ui:browser_element_identifiers",
     "//chrome/browser/ui:ui_features",
     "//chrome/browser/ui:view_ids",
-    "//chrome/browser/ui/ai_overlay_dialog",
     "//chrome/browser/ui/read_anything",
     "//chrome/browser/ui/views/indigo",
     "//chrome/browser/ui/views/new_tab_footer",
