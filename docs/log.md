@@ -228,3 +228,10 @@
 - TTC UI 資産について、`chrome/browser/ttc/app/BUILD.gn`、`chrome/browser/ttc/core/BUILD.gn`、`chrome/browser/BUILD.gn`、`chrome/browser/ui/BUILD.gn`、`chrome/browser/ui/webui/BUILD.gn`、`chrome/browser/ui/browser_window/internal/BUILD.gn`、`chrome/browser/ui/views/toolbar/BUILD.gn`、`chrome/browser/ui/views/frame/BUILD.gn`、`chrome/test/BUILD.gn` の該当箇所を確認。別 consumer は見つからず、Overlay UI / Notes 専用の `chrome/browser/ttc/resources/` も候補ブランチから削除
 - 削除対象は専用コード 72 ファイル（Controller 9、WebUI / Mojo / tools / tests 30、Android bridge 4、toolbar button 2、TTC resources 27）
 - これは GitHub ソースの静的レビュー。全リポジトリの `rg`、`gn refs`、`gn gen`、ビルド、テスト、実ブラウザ確認は未実施。ローカルで GN が別 consumer を示した場合は復元して依存を再分離し、エラーが解消してから `dev` への統合を検討する
+
+
+## 2026-10-24（TTC resources の残存 gitlink を削除）
+
+- `chrome/browser/ttc/resources/` の27ファイル削除後に、GitHub の directory API に `internal` gitlink（mode `160000`）が残っていることを確認
+- 候補ブランチで `chrome/browser/ttc/resources/internal` の gitlink も削除。親の `chrome/browser/ttc/resources/` は存在しなくなり、`chrome/browser/ttc/core/` と `chrome/browser/ttc/app/` は維持
+- これは Git tree / path の静的確認のみ。ローカル `gn refs` / `gn gen` / build / tests / browser check は引き続き未実施
