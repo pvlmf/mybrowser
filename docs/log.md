@@ -238,3 +238,6 @@
 
 
 - 追加の参照チェックで `chrome/browser/ui/webui/webui_urls_for_test.cc` の `chrome-untrusted://ai-overlay-dialog` 例外登録を発見し削除。削除した WebUI URL のテスト除外リストからも取り除いた
+
+
+- 追加チェックで `chrome/browser/ui/webui/web_ui_all_urls_browser_test.cc` に残っていた `features::kAiOverlayDialog` の enable block を削除。削除済み feature declaration のテスト側参照を除去
