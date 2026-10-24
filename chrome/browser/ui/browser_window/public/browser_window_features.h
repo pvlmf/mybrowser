@@ -254,7 +254,6 @@ class TabStripUIControllerImpl;
 }  // namespace tabs_api
 
 namespace ttc {
-class AiOverlayDialogController;
 class EntrypointController;
 }  // namespace ttc
 
@@ -307,7 +306,6 @@ class BrowserWindowFeatures {
   // Members owned by all browser window types.
   std::unique_ptr<UnloadController> unload_controller_;
   std::unique_ptr<ActorBorderViewController> actor_border_view_controller_;
-  std::unique_ptr<ttc::AiOverlayDialogController> ai_overlay_dialog_controller_;
 
   // Helper which handles bookmark app specific browser configuration.
   // This must be initialized before |command_controller_| to ensure the correct

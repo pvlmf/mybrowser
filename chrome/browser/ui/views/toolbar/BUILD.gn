@@ -9,7 +9,6 @@ import("//ui/webui/webui_features.gni")
 
 source_set("toolbar") {
   public = [
-    "ai_overlay_toolbar_button.h",
     "app_menu.h",
     "avatar_toolbar_button_interface.h",
     "back_forward_button.h",
@@ -167,7 +166,6 @@ source_set("toolbar_button") {
 
 source_set("impl") {
   sources = [
-    "ai_overlay_toolbar_button.cc",
     "app_menu.cc",
     "avatar_toolbar_button_interface.cc",
     "back_forward_button.cc",
@@ -394,9 +392,6 @@ source_set("impl") {
     deps += [ "//chrome/browser/ui/views/zoom" ]
   }
 
-  if (is_win || is_mac || is_linux || is_chromeos) {
-    deps += [ "//chrome/browser/ui/ai_overlay_dialog" ]
-  }
   deps += [ "//chrome/browser/ui/views/extensions:extensions_toolbar_desktop" ]
 }
 

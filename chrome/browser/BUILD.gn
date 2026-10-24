@@ -1581,7 +1581,6 @@ source_set("core") {
 
   if (!is_android || is_desktop_android) {
     deps += [
-      "//chrome/browser/ui/webui/ai_overlay_dialog",
       "//chrome/browser/ui/webui/discards",
     ]
   }
@@ -2903,11 +2902,6 @@ source_set("browser") {
       "//chrome/browser/ui/android",
       "//chrome/browser/ui/android:context_menu_helper",
 
-      # The AI overlay dialog Java class is pulled into every Android APK by
-      # toolbar code, so its JNI must be registered in all Android builds. The
-      # bridge itself no-ops when not Desktop Android.
-      "//chrome/browser/ui/android/ai_overlay_dialog",
-      "//chrome/browser/ui/android/ai_overlay_dialog:jni_headers",
       "//chrome/browser/ui/android/enterprise_signals_disclaimer",
       "//chrome/browser/ui/android/hats",
       "//chrome/browser/ui/android/hats:impl",
@@ -3938,14 +3932,6 @@ source_set("browser") {
     deps += [
       "//chrome/browser/webshare",
       "//chrome/browser/webshare:impl",
-    ]
-  }
-  if (is_win || is_mac || is_linux || is_chromeos || is_desktop_android) {
-    public_deps +=
-        [ "//chrome/browser/ui/webui/ai_overlay_dialog:mojo_bindings" ]
-    deps += [
-      "//chrome/browser/ui/webui/ai_overlay_dialog",
-      "//chrome/browser/ui/webui/ai_overlay_dialog:impl",
     ]
   }
   if (enable_downgrade_processing) {

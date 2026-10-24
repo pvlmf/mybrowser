@@ -103,10 +103,6 @@ source_set("configs") {
     deps += [ "//chrome/browser/ui/webui/signin:inline_login" ]
   }
 
-  if (!is_android || is_desktop_android) {
-    deps += [ "//chrome/browser/ui/webui/ai_overlay_dialog" ]
-  }
-
   if (!is_android) {
     deps += [
       "//chrome/browser/actor/ui:actor_overlay_web_view",

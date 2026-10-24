@@ -288,7 +288,6 @@ base::span<const std::string_view> GetUntestedChromeUrlsForTest() {
   // Don't add new URLs here unless there's a strong reason for them to be
   // exempted from these basic checks.
   static constexpr std::string_view kChromeUntestedUrls[] = {
-      "chrome-untrusted://ai-overlay-dialog",
       "chrome-untrusted://compose",
       "chrome-untrusted://data-sharing",
       "chrome-untrusted://drive-picker-host",

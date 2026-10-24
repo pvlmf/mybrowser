@@ -45,7 +45,6 @@
 #include "chrome/browser/tab_group_sync/tab_group_sync_service_factory.h"
 #include "chrome/browser/ttc/core/entrypoint_controller.h"
 #include "chrome/browser/ttc/core/ttc_keyed_service.h"
-#include "chrome/browser/ui/ai_overlay_dialog/ai_overlay_dialog_controller_views.h"
 #include "chrome/browser/ui/animation/browser_animation_controller.h"
 #include "chrome/browser/ui/bookmarks/bookmark_bar_controller.h"
 #include "chrome/browser/ui/bookmarks/bookmarks_service_feature.h"
@@ -562,13 +561,6 @@ void BrowserWindowFeatures::Init(BrowserWindowInterface* browser) {
   // instantiated in this block (please keep this list ordered without taking
   // into consideration buildflags, repeating buildflags is ok):
   if (browser->GetType() == BrowserWindowInterface::Type::TYPE_NORMAL) {
-    if (base::FeatureList::IsEnabled(features::kAiOverlayDialog)) {
-      ai_overlay_dialog_controller_ =
-          GetUserDataFactory()
-              .CreateInstance<ttc::AiOverlayDialogControllerViews>(*browser,
-                                                                   browser);
-    }
-
     if (glic::GlicEnabling::IsProfileEligible(profile)) {
       if (glic::GlicKeyedService* glic_service =
               glic::GlicKeyedService::Get(profile)) {
@@ -1244,7 +1236,6 @@ void BrowserWindowFeatures::TearDownPreBrowserWindowDestruction() {
   glic_iph_controller_.reset();
   glic_split_button_controller_.reset();
   initial_web_ui_manager_.reset();
-  ai_overlay_dialog_controller_.reset();
 
   // Owned-by-all members.
   // contextual_tasks_* are reset first because the group is constructed last

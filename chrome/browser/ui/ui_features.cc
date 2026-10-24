@@ -542,39 +542,6 @@ bool IsAndroidAnimatedProgressBarInBrowserEnabled() {
 }
 #endif  // BUILDFLAG(IS_ANDROID)
 
-// Note: This feature is meant for prototyping and takes shortcuts that mean it
-// cannot be put into production in its current state. Do not enable.
-// crbug.com/502801064
-BASE_FEATURE(kAiOverlayDialog, base::FEATURE_DISABLED_BY_DEFAULT);
-BASE_FEATURE(kAiOverlayDialogDev, base::FEATURE_DISABLED_BY_DEFAULT);
-BASE_FEATURE_PARAM(std::string,
-                   kAiOverlayDialogApiKey,
-                   &kAiOverlayDialog,
-                   "api_key",
-                   "");
-BASE_FEATURE_PARAM(std::string,
-                   kAiOverlayDialogMockJsonPath,
-                   &kAiOverlayDialog,
-                   "mock_json_path",
-                   "");
-BASE_FEATURE_PARAM(bool,
-                   kAiOverlayDialogUseMes,
-                   &kAiOverlayDialog,
-                   "use_mes",
-                   false);
-BASE_FEATURE_PARAM(bool,
-                   kAiOverlayDialogPageTools,
-                   &kAiOverlayDialog,
-                   "enable_page_tools",
-                   false);
-BASE_FEATURE_PARAM(bool,
-                   kAiOverlayDialogNext,
-                   &kAiOverlayDialog,
-                   "enable_next",
-                   false);
-BASE_FEATURE(kAiOverlayDisableNavigationContext,
-             base::FEATURE_DISABLED_BY_DEFAULT);
-
 BASE_FEATURE(kTabGroupsFocusing, base::FEATURE_DISABLED_BY_DEFAULT);
 
 BASE_FEATURE_PARAM(bool, kTabGroupsFocusFreezing, &kTabGroupsFocusing, true);
